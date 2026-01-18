@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Uova strapazzate con zucchine",
+    "ingredients": [
+      { "food": "Uova intere", "grams": 120 },
+      { "food": "Zucchine", "grams": 200 },
+      { "food": "Olio extravergine", "grams": 5 }
+    ],
+    "meal": "pranzo"
+  }
+]
