@@ -1,2 +1,106 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dieta Dinamica per Due Persone</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <h1>Dieta Dinamica</h1>
+  <p>Calcolo intelligente, porzioni automatiche, una cucina sola per due persone</p>
+</header>
+
+<main>
+  <section class="person" id="personA">
+    <h2>Persona A</h2>
+    <form>
+      <label>Sesso
+        <select name="sex">
+          <option value="male">Uomo</option>
+          <option value="female">Donna</option>
+        </select>
+      </label>
+
+      <label>Età
+        <input type="number" name="age">
+      </label>
+
+      <label>Altezza (cm)
+        <input type="number" name="height_cm">
+      </label>
+
+      <label>Peso attuale (kg)
+        <input type="number" name="weight_kg">
+      </label>
+
+      <label>Peso obiettivo (kg)
+        <input type="number" name="target_weight_kg">
+      </label>
+
+      <label>Livello attività
+        <select name="activity_level">
+          <option value="sedentary">Sedentario</option>
+          <option value="light">Leggero</option>
+          <option value="medium">Medio</option>
+        </select>
+      </label>
+
+      <label>Settimane obiettivo
+        <input type="number" name="goal_weeks">
+      </label>
+    </form>
+  </section>
+
+  <section class="person" id="personB">
+    <h2>Persona B</h2>
+    <form>
+      <label>Sesso
+        <select name="sex">
+          <option value="female">Donna</option>
+          <option value="male">Uomo</option>
+        </select>
+      </label>
+
+      <label>Età
+        <input type="number" name="age">
+      </label>
+
+      <label>Altezza (cm)
+        <input type="number" name="height_cm">
+      </label>
+
+      <label>Peso attuale (kg)
+        <input type="number" name="weight_kg">
+      </label>
+
+      <label>Peso obiettivo (kg)
+        <input type="number" name="target_weight_kg">
+      </label>
+
+      <label>Livello attività
+        <select name="activity_level">
+          <option value="sedentary">Sedentario</option>
+          <option value="light">Leggero</option>
+          <option value="medium">Medio</option>
+        </select>
+      </label>
+
+      <label>Settimane obiettivo
+        <input type="number" name="goal_weeks">
+      </label>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <p>Sistema dieta dinamico – pronto per espansioni automatiche</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
 
 
