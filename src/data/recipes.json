@@ -1,0 +1,21 @@
+[
+  {
+    "id": "1",
+    "name": "Pollo e Zucchine",
+    "ingredients": [
+      { "foodId": "3", "amount": 200 },
+      { "foodId": "2", "amount": 300 },
+      { "foodId": "4", "amount": 10 }
+    ],
+    "instructions": "Taglia il pollo a cubetti e le zucchine a rondelle. Salta in padella con olio."
+  },
+  {
+    "id": "2",
+    "name": "Omelette Proteica",
+    "ingredients": [
+      { "foodId": "1", "amount": 150 },
+      { "foodId": "4", "amount": 5 }
+    ],
+    "instructions": "Sbatte le uova e cuoci in padella antiaderente con un filo d'olio."
+  }
+]

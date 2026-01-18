@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "userId": "1",
+    "name": "Piano Dimagrimento Gennaio",
+    "startDate": "2026-01-01",
+    "endDate": "2026-01-31",
+    "days": {
+      "Monday": {
+        "breakfast": { "recipeId": "2", "servings": 1 },
+        "lunch": { "recipeId": "1", "servings": 1 },
+        "dinner": { "foodId": "3", "amount": 150 }
+      }
+    }
+  }
+]

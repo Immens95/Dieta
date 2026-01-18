@@ -1,0 +1,24 @@
+[
+  {
+    "id": "1",
+    "name": "Mario Rossi",
+    "email": "mario.rossi@example.com",
+    "role": "admin",
+    "goal": "weight_loss",
+    "weight": 85,
+    "height": 180,
+    "age": 30,
+    "activityLevel": "moderate"
+  },
+  {
+    "id": "2",
+    "name": "Luigi Bianchi",
+    "email": "luigi.bianchi@example.com",
+    "role": "user",
+    "goal": "muscle_gain",
+    "weight": 70,
+    "height": 175,
+    "age": 25,
+    "activityLevel": "high"
+  }
+]
