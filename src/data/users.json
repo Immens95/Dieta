@@ -5,20 +5,26 @@
     "email": "mario.rossi@example.com",
     "role": "admin",
     "goal": "weight_loss",
+    "gender": "male",
     "weight": 85,
+    "targetWeight": 75,
     "height": 180,
     "age": 30,
-    "activityLevel": "moderate"
+    "activityLevel": "moderate",
+    "weeksToGoal": 12
   },
   {
     "id": "2",
     "name": "Luigi Bianchi",
     "email": "luigi.bianchi@example.com",
     "role": "user",
-    "goal": "muscle_gain",
-    "weight": 70,
+    "goal": "maintenance",
+    "gender": "male",
+    "weight": 75,
+    "targetWeight": 75,
     "height": 175,
     "age": 25,
-    "activityLevel": "high"
+    "activityLevel": "high",
+    "weeksToGoal": 4
   }
 ]

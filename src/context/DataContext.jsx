@@ -85,6 +85,43 @@ export const DataProvider = ({ children }) => {
     return totals;
   };
 
+  const calculateUserStats = (user) => {
+    if (!user || !user.weight || !user.height || !user.age) return null;
+
+    // 1. BMR (Mifflin-St Jeor)
+    let bmr = 0;
+    if (user.gender === 'male') {
+      bmr = (10 * user.weight) + (6.25 * user.height) - (5 * user.age) + 5;
+    } else {
+      bmr = (10 * user.weight) + (6.25 * user.height) - (5 * user.age) - 161;
+    }
+
+    // 2. Maintenance Calories
+    const activityCoefficients = {
+      sedentary: 1.2,
+      light: 1.375,
+      moderate: 1.55,
+      active: 1.725,
+      very_active: 1.9
+    };
+    const maintenance = bmr * (activityCoefficients[user.activityLevel] || 1.2);
+
+    // 3. Target Calories (Weight Loss)
+    let target = maintenance;
+    let deficit = 0;
+    if (user.weight > user.targetWeight && user.weeksToGoal > 0) {
+      deficit = ((user.weight - user.targetWeight) * 7700) / (user.weeksToGoal * 7);
+      target = maintenance - deficit;
+    }
+
+    return {
+      bmr: Math.round(bmr),
+      maintenance: Math.round(maintenance),
+      target: Math.round(target),
+      deficit: Math.round(deficit)
+    };
+  };
+
   return (
     <DataContext.Provider value={{
       foods, addFood, updateFood, deleteFood,
@@ -92,7 +129,8 @@ export const DataProvider = ({ children }) => {
       users, addUser, updateUser, deleteUser,
       plans, addPlan, updatePlan, deletePlan,
       currentUser, setCurrentUser,
-      calculateRecipeNutrition
+      calculateRecipeNutrition,
+      calculateUserStats
     }}>
       {children}
     </DataContext.Provider>

@@ -7,6 +7,7 @@ import { Alimenti } from './pages/Alimenti';
 import { Ricette } from './pages/Ricette';
 import { Utenti } from './pages/Utenti';
 import { Piani } from './pages/Piani';
+import { Profilo } from './pages/Profilo';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
+            <Route path="profilo" element={<Profilo />} />
             <Route path="alimenti" element={<Alimenti />} />
             <Route path="ricette" element={<Ricette />} />
             <Route path="utenti" element={<Utenti />} />

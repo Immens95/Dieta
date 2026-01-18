@@ -6,7 +6,7 @@ import {
   UtensilsCrossed, 
   Users, 
   Calendar,
-  Settings,
+  User,
   LogOut
 } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -18,6 +18,7 @@ function cn(...inputs) {
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
+  { icon: User, label: 'Profilo', href: '/profilo' },
   { icon: Apple, label: 'Alimenti', href: '/alimenti' },
   { icon: UtensilsCrossed, label: 'Ricette', href: '/ricette' },
   { icon: Users, label: 'Utenti', href: '/utenti' },
