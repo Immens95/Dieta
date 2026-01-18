@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Uova intere",
+    "kcal_100": 155,
+    "protein": 13,
+    "fat": 11,
+    "carbs": 1
+  },
+  {
+    "name": "Zucchine",
+    "kcal_100": 17,
+    "protein": 1.2,
+    "fat": 0.3,
+    "carbs": 3.1
+  },
+  {
+    "name": "Petto di pollo",
+    "kcal_100": 120,
+    "protein": 22,
+    "fat": 1.5,
+    "carbs": 0
+  },
+  {
+    "name": "Olio extravergine",
+    "kcal_100": 900,
+    "protein": 0,
+    "fat": 100,
+    "carbs": 0
+  }
+]
