@@ -1,14 +1,119 @@
 [
-  {
-    "id": "1",
-    "userId": "1",
-    "name": "Piano Definizione",
-    "days": {
-      "monday": {
-        "breakfast": [],
-        "lunch": ["1"],
-        "dinner": []
-      }
+    {
+        "id": "1",
+        "userId": "1",
+        "name": "Piano Definizione",
+        "days": {
+            "monday": {
+                "breakfast": [
+                    "94"
+                ],
+                "lunch": [
+                    "81"
+                ],
+                "dinner": [
+                    "251"
+                ],
+                "snacks": [
+                    "286"
+                ]
+            },
+            "tuesday": {
+                "breakfast": [
+                    "292"
+                ],
+                "lunch": [
+                    "318"
+                ],
+                "dinner": [
+                    "55"
+                ],
+                "snacks": [
+                    "253"
+                ]
+            },
+            "wednesday": {
+                "breakfast": [
+                    "443"
+                ],
+                "lunch": [
+                    "468"
+                ],
+                "dinner": [
+                    "308"
+                ],
+                "snacks": [
+                    "441"
+                ]
+            },
+            "thursday": {
+                "breakfast": [
+                    "262"
+                ],
+                "lunch": [
+                    "277"
+                ],
+                "dinner": [
+                    "172"
+                ],
+                "snacks": [
+                    "152"
+                ]
+            },
+            "friday": {
+                "breakfast": [
+                    "229"
+                ],
+                "lunch": [
+                    "435"
+                ],
+                "dinner": [
+                    "316"
+                ],
+                "snacks": [
+                    "199"
+                ]
+            },
+            "saturday": {
+                "breakfast": [
+                    "198"
+                ],
+                "lunch": [
+                    "280"
+                ],
+                "dinner": [
+                    "482"
+                ],
+                "snacks": [
+                    "406"
+                ]
+            },
+            "sunday": {
+                "breakfast": [
+                    "313"
+                ],
+                "lunch": [
+                    "359"
+                ],
+                "dinner": [
+                    "439"
+                ],
+                "snacks": [
+                    "14"
+                ]
+            }
+        }
+    },
+    {
+        "id": "1768831052041",
+        "userId": "2",
+        "name": "Piano di Sara Verdi",
+        "days": []
+    },
+    {
+        "id": "1768831052041",
+        "userId": "2",
+        "name": "Piano di Sara Verdi",
+        "days": []
     }
-  }
 ]

@@ -48,7 +48,7 @@ export async function FoodsPage() {
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
                     <img src="${food.image || 'https://via.placeholder.com/40'}" 
-                      onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${encodeURIComponent(food.name)}';" 
+                      onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
                       class="w-10 h-10 rounded-lg object-cover">
                     <div>
                       <div class="font-medium text-gray-900">${food.name}</div>
@@ -217,6 +217,10 @@ export async function FoodsPage() {
     `;
 
     document.body.appendChild(modal);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
 
     const previewImg = modal.querySelector('#modal-image-preview');
     const urlInput = modal.querySelector('#image-url-input');

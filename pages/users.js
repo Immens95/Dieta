@@ -188,6 +188,10 @@ export async function UsersPage() {
 
     document.body.appendChild(modal);
 
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
+
     modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
     modal.querySelector('#user-form').addEventListener('submit', (e) => {
       e.preventDefault();

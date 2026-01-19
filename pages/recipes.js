@@ -8,6 +8,7 @@ export async function RecipesPage() {
 
   let recipes = store.getAll('recipes') || [];
   let foods = store.getAll('foods') || [];
+  let searchTerm = '';
 
   function calculateTotals(recipeIngredients) {
     return recipeIngredients.reduce((acc, item) => {
@@ -24,29 +25,49 @@ export async function RecipesPage() {
   }
 
   function render() {
+    const filteredRecipes = recipes.filter(recipe => 
+      recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      recipe.instructions.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (recipe.tags || []).some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
     container.innerHTML = `
-      <div class="flex justify-between items-center">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h2 class="text-2xl font-bold text-gray-800">Ricettario</h2>
-        <button id="add-recipe-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          Aggiungi Ricetta
-        </button>
+        
+        <div class="flex gap-3">
+          <div class="relative flex-1 max-w-md">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+            <input type="text" id="recipe-search-input" placeholder="Cerca ricette, ingredienti o tag..." 
+              value="${searchTerm}"
+              class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+          </div>
+          
+          <button id="add-recipe-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors shrink-0">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Aggiungi Ricetta
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="recipe-list">
-        ${recipes.map(recipe => {
-          const totals = calculateTotals(recipe.ingredients);
+        ${filteredRecipes.length > 0 ? filteredRecipes.map(recipe => {
+          const totals = recipe.totals || calculateTotals(recipe.ingredients);
           return `
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow cursor-pointer recipe-card" data-id="${recipe.id}">
               <div class="h-48 bg-gray-200 relative">
-                <img src="${recipe.image || 'https://via.placeholder.com/400x300?text=' + encodeURIComponent(recipe.name)}" 
-                  onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=${encodeURIComponent(recipe.name)}';" 
+                <img src="${recipe.image || 'https://via.placeholder.com/400x300?text=' + encodeURIComponent(recipe.name.replace(/'/g, ''))}" 
+                  onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=${encodeURIComponent(recipe.name.replace(/'/g, ''))}';" 
                   class="w-full h-full object-cover">
+                <div class="absolute top-2 left-2 flex gap-1">
+                  <span class="px-2 py-1 bg-white/90 rounded text-[10px] font-bold text-blue-600 uppercase shadow-sm">${recipe.difficulty || 'Media'}</span>
+                  <span class="px-2 py-1 bg-white/90 rounded text-[10px] font-bold text-gray-600 uppercase shadow-sm">${recipe.prepTime || '30 min'}</span>
+                </div>
                 <div class="absolute top-2 right-2 flex gap-2">
-                  <button class="p-2 bg-white/90 rounded-full text-gray-600 hover:text-blue-600 edit-recipe" data-id="${recipe.id}">
+                  <button class="p-2 bg-white/90 rounded-full text-gray-600 hover:text-blue-600 edit-recipe" data-id="${recipe.id}" onclick="event.stopPropagation()">
                     <i data-lucide="edit-2" class="w-4 h-4"></i>
                   </button>
-                  <button class="p-2 bg-white/90 rounded-full text-gray-600 hover:text-red-600 delete-recipe" data-id="${recipe.id}">
+                  <button class="p-2 bg-white/90 rounded-full text-gray-600 hover:text-red-600 delete-recipe" data-id="${recipe.id}" onclick="event.stopPropagation()">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -71,26 +92,50 @@ export async function RecipesPage() {
                     <div class="text-sm font-bold text-red-700">${Math.round(totals.fats)}g</div>
                   </div>
                 </div>
-                <div class="text-sm text-gray-600 line-clamp-3 mb-4">
+                <div class="text-sm text-gray-600 line-clamp-2 mb-4">
                   ${recipe.instructions}
                 </div>
-                <div class="mt-auto pt-4 border-t border-gray-50">
-                  <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Ingredienti</div>
-                  <div class="flex flex-wrap gap-2">
-                    ${recipe.ingredients.map(ing => {
-                      const food = foods.find(f => f.id === ing.foodId);
-                      return `<span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">${food?.name} (${ing.amount}g)</span>`;
-                    }).join('')}
-                  </div>
+                <div class="mt-auto flex flex-wrap gap-1">
+                  ${(recipe.tags || []).slice(0, 3).map(tag => `
+                    <span class="px-2 py-0.5 bg-gray-100 text-gray-500 rounded text-[10px] font-bold uppercase">${tag}</span>
+                  `).join('')}
                 </div>
               </div>
             </div>
           `;
-        }).join('')}
+        }).join('') : `
+          <div class="col-span-full py-12 text-center">
+            <div class="bg-gray-50 rounded-2xl p-8 max-w-sm mx-auto border border-dashed border-gray-200">
+              <i data-lucide="search-x" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i>
+              <p class="text-gray-500 font-medium">Nessuna ricetta trovata per "${searchTerm}"</p>
+              <button id="clear-search" class="mt-4 text-blue-600 text-sm font-bold hover:underline">Mostra tutte le ricette</button>
+            </div>
+          </div>
+        `}
       </div>
     `;
 
     // Event listeners
+    const searchInput = container.querySelector('#recipe-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        searchTerm = e.target.value;
+        render();
+        // Maintain focus and cursor position after re-render
+        const newInput = container.querySelector('#recipe-search-input');
+        newInput.focus();
+        newInput.setSelectionRange(searchTerm.length, searchTerm.length);
+      });
+    }
+
+    const clearSearchBtn = container.querySelector('#clear-search');
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => {
+        searchTerm = '';
+        render();
+      });
+    }
+
     container.querySelector('#add-recipe-btn').addEventListener('click', () => showRecipeModal());
     
     container.querySelectorAll('.delete-recipe').forEach(btn => {
@@ -109,6 +154,14 @@ export async function RecipesPage() {
         const id = btn.getAttribute('data-id');
         const recipe = store.getById('recipes', id);
         showRecipeModal(recipe);
+      });
+    });
+
+    container.querySelectorAll('.recipe-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-id');
+        const recipe = store.getById('recipes', id);
+        showRecipeDetailModal(recipe, foods);
       });
     });
 
@@ -273,6 +326,10 @@ export async function RecipesPage() {
       if (window.lucide) window.lucide.createIcons();
     }
 
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
+
     function updateTotals() {
       const totals = calculateTotals(currentIngredients);
       const container = modal.querySelector('#recipe-totals');
@@ -293,3 +350,132 @@ export async function RecipesPage() {
   render();
   return container;
 }
+
+export function showRecipeDetailModal(recipe, foods) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm';
+  
+  // Totals calculation helper (since we're outside the component scope)
+  function calculateTotalsLocal(recipeIngredients) {
+    return recipeIngredients.reduce((acc, item) => {
+      const food = foods.find(f => f.id === item.foodId);
+      if (food) {
+        const factor = item.amount / 100;
+        acc.calories += food.calories * factor;
+        acc.protein += food.protein * factor;
+        acc.carbs += food.carbs * factor;
+        acc.fats += food.fats * factor;
+      }
+      return acc;
+    }, { calories: 0, protein: 0, carbs: 0, fats: 0 });
+  }
+
+  const totals = recipe.totals || calculateTotalsLocal(recipe.ingredients);
+
+    modal.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
+        <div class="relative h-64 md:h-80 shrink-0">
+          <img src="${recipe.image || 'https://via.placeholder.com/800x600'}" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <button id="close-detail" class="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/40 rounded-full text-white transition-colors">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+          <div class="absolute bottom-6 left-6 right-6">
+            <div class="flex gap-2 mb-2">
+              <span class="px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-bold uppercase tracking-wider">${recipe.difficulty || 'Media'}</span>
+              <span class="px-2 py-1 bg-white/20 text-white rounded text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">${recipe.prepTime || '30 min'}</span>
+            </div>
+            <h2 class="text-3xl font-bold text-white mb-2">${recipe.name}</h2>
+            <div class="flex gap-4 text-white/90 text-sm">
+              <div class="flex items-center gap-1"><i data-lucide="flame" class="w-4 h-4 text-orange-400"></i> ${totals.calories} Kcal</div>
+              <div class="flex items-center gap-1"><i data-lucide="leaf" class="w-4 h-4 text-green-400"></i> ${recipe.tags?.join(', ') || 'Naturale'}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="md:col-span-1 space-y-8">
+              <div>
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Ingredienti</h3>
+                <ul class="space-y-3">
+                  ${recipe.ingredients.map(ing => {
+                    const food = foods.find(f => f.id === ing.foodId);
+                    return `
+                      <li class="flex justify-between items-center text-gray-700 pb-2 border-b border-gray-50">
+                        <span class="font-medium">${food?.name || 'Ingrediente'}</span>
+                        <span class="text-gray-400 text-sm">${ing.amount}g</span>
+                      </li>
+                    `;
+                  }).join('')}
+                </ul>
+              </div>
+
+              <div class="bg-gray-50 p-6 rounded-xl space-y-4">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Macro-nutrienti</h3>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Proteine</span>
+                    <span class="font-bold text-green-600">${totals.protein}g</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Carboidrati</span>
+                    <span class="font-bold text-yellow-600">${totals.carbs}g</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Grassi</span>
+                    <span class="font-bold text-red-600">${totals.fats}g</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="md:col-span-2 space-y-8">
+              <div>
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Preparazione</h3>
+                <div class="space-y-6">
+                  ${(recipe.steps || [recipe.instructions]).map((step, idx) => `
+                    <div class="flex gap-4">
+                      <div class="shrink-0 w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm border border-blue-100">${idx + 1}</div>
+                      <p class="text-gray-700 leading-relaxed pt-1">${step}</p>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              ${recipe.tips && recipe.tips.length > 0 ? `
+                <div class="bg-amber-50 border border-amber-100 p-6 rounded-xl">
+                  <h3 class="flex items-center gap-2 text-sm font-bold text-amber-700 uppercase tracking-widest mb-4">
+                    <i data-lucide="lightbulb" class="w-4 h-4"></i> I Consigli dello Chef
+                  </h3>
+                  <ul class="space-y-3">
+                    ${recipe.tips.map(tip => `
+                      <li class="flex gap-3 text-amber-800 text-sm">
+                        <span class="text-amber-400">•</span>
+                        <span>${tip}</span>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+    if (window.lucide) window.lucide.createIcons();
+
+    modal.querySelector('#close-detail').addEventListener('click', () => {
+      modal.classList.add('animate-scale-out');
+      setTimeout(() => modal.remove(), 200);
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('animate-scale-out');
+        setTimeout(() => modal.remove(), 200);
+      }
+    });
+  }

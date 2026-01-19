@@ -86,6 +86,7 @@ export async function DashboardPage() {
       }
 
       // Health Conditions
+      const conditions = (user.healthConditions || []).map(c => c.toLowerCase());
       const hasReflux = conditions.includes('reflux') || conditions.includes('reflusso');
       const hasIBS = conditions.includes('ibs');
 

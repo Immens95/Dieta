@@ -13,18 +13,32 @@ export class Store {
   async init() {
     const keys = ['users', 'foods', 'recipes', 'plans'];
     
-    // Clear old data if it's the 3-item version or corrupted
+    // Clear old data if it's the old version or corrupted
     try {
       const foodsStored = localStorage.getItem('dieta_foods');
+      const recipesStored = localStorage.getItem('dieta_recipes');
+      
+      let shouldClear = false;
+
       if (foodsStored) {
-        const parsed = JSON.parse(foodsStored);
-        // Check if empty or contains the old sample data (less than 300 foods)
-        if (!Array.isArray(parsed) || parsed.length < 300) {
-          console.warn('Migration: Clearing old food data (found ' + (parsed?.length || 0) + ' items)');
-          localStorage.removeItem('dieta_foods');
-          localStorage.removeItem('dieta_recipes');
-          localStorage.removeItem('dieta_plans');
+        const parsedFoods = JSON.parse(foodsStored);
+        if (!Array.isArray(parsedFoods) || parsedFoods.length < 1000) {
+          shouldClear = true;
         }
+      }
+
+      if (recipesStored) {
+        const parsedRecipes = JSON.parse(recipesStored);
+        if (!Array.isArray(parsedRecipes) || parsedRecipes.length < 500 || !parsedRecipes[0].prepTime) {
+          shouldClear = true;
+        }
+      }
+
+      if (shouldClear) {
+        console.warn('Migration: Clearing old data to load 1000 foods and 500 recipes');
+        localStorage.removeItem('dieta_foods');
+        localStorage.removeItem('dieta_recipes');
+        localStorage.removeItem('dieta_plans');
       }
     } catch (e) {
       console.error('Error during migration check:', e);
