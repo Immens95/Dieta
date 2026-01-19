@@ -36,7 +36,7 @@ export async function FoodsPage() {
           </thead>
           <tbody id="food-table-body">
             ${foods.map(food => `
-              <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+              <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer food-row" data-id="${food.id}">
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
                     <img src="${food.image || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-lg object-cover">
@@ -78,23 +78,26 @@ export async function FoodsPage() {
       showFoodModal();
     });
 
-    container.querySelectorAll('.delete-food').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
+    container.addEventListener('click', (e) => {
+      const row = e.target.closest('.food-row');
+      const deleteBtn = e.target.closest('.delete-food');
+      const editBtn = e.target.closest('.edit-food');
+
+      if (deleteBtn) {
+        const id = deleteBtn.getAttribute('data-id');
         if (confirm('Sei sicuro di voler eliminare questo alimento?')) {
           store.delete('foods', id);
           foods = store.getAll('foods');
           render();
         }
-      });
-    });
+        return;
+      }
 
-    container.querySelectorAll('.edit-food').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
+      if (editBtn || row) {
+        const id = (editBtn || row).getAttribute('data-id');
         const food = store.getById('foods', id);
         showFoodModal(food);
-      });
+      }
     });
 
     if (window.lucide) window.lucide.createIcons();
@@ -104,7 +107,7 @@ export async function FoodsPage() {
   function updateTable(filteredFoods) {
     const tbody = container.querySelector('#food-table-body');
     tbody.innerHTML = filteredFoods.map(food => `
-      <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+      <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer food-row" data-id="${food.id}">
         <td class="px-6 py-4">
           <div class="flex items-center gap-3">
             <img src="${food.image || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-lg object-cover">

@@ -7,7 +7,8 @@
     "carbs": 0,
     "fats": 3.6,
     "unit": "100g",
-    "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=300&q=80"
+    "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=300&q=80",
+    "tags": ["gluten-free", "lactose-free", "low-acid", "ibs-friendly"]
   },
   {
     "id": "2",
@@ -17,7 +18,8 @@
     "carbs": 23,
     "fats": 0.9,
     "unit": "100g",
-    "image": "https://images.unsplash.com/photo-1512058560366-cd2427ff5670?auto=format&fit=crop&w=300&q=80"
+    "image": "https://images.unsplash.com/photo-1512058560366-cd2427ff5670?auto=format&fit=crop&w=300&q=80",
+    "tags": ["gluten-free", "lactose-free", "low-acid"]
   },
   {
     "id": "3",
@@ -27,6 +29,29 @@
     "carbs": 0,
     "fats": 100,
     "unit": "100ml",
-    "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=300&q=80"
+    "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=300&q=80",
+    "tags": ["gluten-free", "lactose-free"]
+  },
+  {
+    "id": "4",
+    "name": "Latte Intero",
+    "calories": 64,
+    "protein": 3.3,
+    "carbs": 4.8,
+    "fats": 3.6,
+    "unit": "100ml",
+    "image": "https://images.unsplash.com/photo-1563636619-e910ef2a844b?auto=format&fit=crop&w=300&q=80",
+    "tags": ["gluten-free", "acidic"]
+  },
+  {
+    "id": "5",
+    "name": "Pane di Segale",
+    "calories": 259,
+    "protein": 9,
+    "carbs": 48,
+    "fats": 3.3,
+    "unit": "100g",
+    "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=300&q=80",
+    "tags": ["lactose-free"]
   }
 ]

@@ -47,12 +47,15 @@ export class Router {
 
   updateActiveLinks() {
     document.querySelectorAll('a[data-link]').forEach(link => {
-      if (link.getAttribute('href') === this.currentPath) {
-        link.classList.add('bg-blue-600', 'text-white');
-        link.classList.remove('text-gray-300', 'hover:bg-gray-700');
+      const isHome = link.getAttribute('href') === '/' && (this.currentPath === '/' || this.currentPath === '');
+      const isOther = link.getAttribute('href') !== '/' && this.currentPath.startsWith(link.getAttribute('href'));
+      
+      if (isHome || isOther) {
+        link.classList.add('text-blue-600');
+        link.classList.remove('text-gray-500');
       } else {
-        link.classList.remove('bg-blue-600', 'text-white');
-        link.classList.add('text-gray-300', 'hover:bg-gray-700');
+        link.classList.remove('text-blue-600');
+        link.classList.add('text-gray-500');
       }
     });
   }

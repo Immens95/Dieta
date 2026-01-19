@@ -29,7 +29,7 @@ export async function UsersPage() {
           </thead>
           <tbody>
             ${users.map(user => `
-              <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+              <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer user-row" data-id="${user.id}">
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
@@ -74,23 +74,26 @@ export async function UsersPage() {
     // Event listeners
     container.querySelector('#add-user-btn').addEventListener('click', () => showUserModal());
     
-    container.querySelectorAll('.delete-user').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
+    container.addEventListener('click', (e) => {
+      const row = e.target.closest('.user-row');
+      const deleteBtn = e.target.closest('.delete-user');
+      const editBtn = e.target.closest('.edit-user');
+
+      if (deleteBtn) {
+        const id = deleteBtn.getAttribute('data-id');
         if (confirm('Eliminare questo utente?')) {
           store.delete('users', id);
           users = store.getAll('users');
           render();
         }
-      });
-    });
+        return;
+      }
 
-    container.querySelectorAll('.edit-user').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
+      if (editBtn || row) {
+        const id = (editBtn || row).getAttribute('data-id');
         const user = store.getById('users', id);
         showUserModal(user);
-      });
+      }
     });
 
     if (window.lucide) window.lucide.createIcons();
@@ -149,6 +152,22 @@ export async function UsersPage() {
                 <option value="active" ${user?.activityLevel === 'active' ? 'selected' : ''}>Attivo</option>
               </select>
             </div>
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-gray-700">Patologie (es: reflusso, ibs, endometriosi)</label>
+              <input type="text" name="healthConditions" value="${user?.healthConditions?.join(', ') || ''}" placeholder="Separati da virgola" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-gray-700">Intolleranze (es: lattosio, glutine)</label>
+              <input type="text" name="intolerances" value="${user?.intolerances?.join(', ') || ''}" placeholder="Separati da virgola" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-gray-700">Sensibilità Organismo</label>
+              <select name="sensitivity" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                <option value="low" ${user?.sensitivity === 'low' ? 'selected' : ''}>Poco Sensibile</option>
+                <option value="medium" ${user?.sensitivity === 'medium' ? 'selected' : ''}>Medio Sensibile</option>
+                <option value="high" ${user?.sensitivity === 'high' ? 'selected' : ''}>Molto Sensibile</option>
+              </select>
+            </div>
           </div>
 
           <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
@@ -171,6 +190,10 @@ export async function UsersPage() {
       ['age', 'weight', 'height', 'targetWeight', 'goalWeeks'].forEach(key => {
         data[key] = Number(data[key]);
       });
+
+      // Convert lists
+      data.healthConditions = data.healthConditions ? data.healthConditions.split(',').map(s => s.trim().toLowerCase()).filter(s => s) : [];
+      data.intolerances = data.intolerances ? data.intolerances.split(',').map(s => s.trim().toLowerCase()).filter(s => s) : [];
 
       if (user) {
         store.update('users', user.id, data);
