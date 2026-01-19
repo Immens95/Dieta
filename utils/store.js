@@ -1,6 +1,7 @@
 export class Store {
   constructor() {
     this.initialized = false;
+    this.version = '1.2.0'; // Increment this to force migration
     this.data = {
       users: [],
       foods: [],
@@ -15,34 +16,44 @@ export class Store {
     
     // Clear old data if it's the old version or corrupted
     try {
+      const storedVersion = localStorage.getItem('dieta_version');
       const foodsStored = localStorage.getItem('dieta_foods');
       const recipesStored = localStorage.getItem('dieta_recipes');
       
       let shouldClear = false;
 
-      if (foodsStored) {
+      if (storedVersion !== this.version) {
+        shouldClear = true;
+      }
+
+      if (foodsStored && !shouldClear) {
         const parsedFoods = JSON.parse(foodsStored);
         if (!Array.isArray(parsedFoods) || parsedFoods.length < 1000) {
           shouldClear = true;
         }
       }
 
-      if (recipesStored) {
+      if (recipesStored && !shouldClear) {
         const parsedRecipes = JSON.parse(recipesStored);
-        if (!Array.isArray(parsedRecipes) || parsedRecipes.length < 500 || !parsedRecipes[0].prepTime || !parsedRecipes[0].mealCategories) {
+        if (!Array.isArray(parsedRecipes) || parsedRecipes.length < 1000 || !parsedRecipes[0].prepTime || !parsedRecipes[0].mealCategories) {
           shouldClear = true;
         }
       }
 
       if (shouldClear) {
-        console.warn('Migration: Clearing old data to load 1000 foods and 500 recipes');
-        localStorage.removeItem('dieta_foods');
-        localStorage.removeItem('dieta_recipes');
-        localStorage.removeItem('dieta_plans');
+        console.warn(`Migration: Clearing old data (v${storedVersion || '0'}) to load new data (v${this.version})`);
+        localStorage.clear(); // Clear everything to be safe
+        localStorage.setItem('dieta_version', this.version);
+        // Force clearing in-memory data as well
+        this.data.foods = [];
+        this.data.recipes = [];
+        this.data.plans = [];
+        this.data.users = [];
       }
     } catch (e) {
       console.error('Error during migration check:', e);
-      localStorage.clear(); // Nuclear option if JSON is malformed
+      localStorage.clear();
+      localStorage.setItem('dieta_version', this.version);
     }
 
     const loadPromises = keys.map(async (key) => {

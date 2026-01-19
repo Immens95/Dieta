@@ -1,6 +1,22 @@
 import { store } from '../utils/store.js';
 import { recipeImages, getUnsplashUrl, searchUnsplashImages } from '../utils/imageGallery.js';
 
+function getOriginFlag(origin) {
+  const flags = {
+    'Italia': '🇮🇹',
+    'Francia': '🇫🇷',
+    'Grecia': '🇬🇷',
+    'Spagna': '🇪🇸',
+    'Messico': '🇲🇽',
+    'Giappone': '🇯🇵',
+    'India': '🇮🇳',
+    'USA': '🇺🇸',
+    'Mediterranea': '🥗',
+    'Internazionale': '🌍'
+  };
+  return flags[origin] || '🍽️';
+}
+
 export async function RecipesPage() {
   await store.ensureInitialized();
   const container = document.createElement('div');
@@ -212,6 +228,9 @@ export async function RecipesPage() {
                   <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   
                   <div class="absolute top-3 left-3 flex gap-1.5">
+                    <span class="px-2 py-1 bg-white/95 backdrop-blur shadow-sm rounded-lg text-[10px] font-extrabold flex items-center gap-1">
+                      <span>${getOriginFlag(recipe.origin)}</span>
+                    </span>
                     <span class="px-2 py-1 bg-white/95 backdrop-blur shadow-sm rounded-lg text-[10px] font-extrabold text-blue-600 uppercase tracking-tighter">${recipe.difficulty || 'Media'}</span>
                     <span class="px-2 py-1 bg-white/95 backdrop-blur shadow-sm rounded-lg text-[10px] font-extrabold text-gray-600 uppercase tracking-tighter">${recipe.prepTime || '30 min'}</span>
                     ${isAdapted ? `<span class="px-2 py-1 bg-green-600 shadow-sm rounded-lg text-[10px] font-extrabold text-white uppercase tracking-tighter">Adattata</span>` : ''}
@@ -557,13 +576,8 @@ export async function RecipesPage() {
             `;
           } else {
             html += `
-              <div class="col-span-2 mt-2 p-3 bg-blue-50 rounded-lg border border-blue-100 text-center">
-                <p class="text-[10px] text-blue-600 mb-2">Cerchi altro? Trova immagini gratuite su Unsplash:</p>
-                <a href="${getUnsplashUrl(gallerySearchTerm)}" target="_blank" 
-                   class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-md hover:bg-blue-700 transition-colors">
-                  <i data-lucide="external-link" class="w-3 h-3"></i>
-                  Cerca "${gallerySearchTerm}" su Unsplash (Esterno)
-                </a>
+              <div class="col-span-2 mt-2 p-3 bg-gray-50 rounded-lg border border-gray-100 text-center">
+                <p class="text-[10px] text-gray-400">Nessun risultato aggiuntivo trovato su Unsplash.</p>
               </div>
             `;
           }
@@ -723,6 +737,10 @@ export function showRecipeDetailModal(recipe, foods, targetCals = null) {
               <h2 class="text-2xl sm:text-3xl font-black text-white mb-2 leading-tight">${recipe.name}</h2>
               <div class="flex flex-wrap gap-3 text-white/90 text-xs font-bold uppercase tracking-wider">
                 <div class="flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-orange-400"></i> ${Math.round(totals.calories)} Kcal</div>
+                <div class="flex items-center gap-1.5">
+                  <span>${getOriginFlag(recipe.origin)}</span>
+                  <span>${recipe.origin || 'Internazionale'}</span>
+                </div>
                 <div class="flex items-center gap-1.5"><i data-lucide="tag" class="w-4 h-4 text-blue-400"></i> ${recipe.tags?.slice(0, 2).join(', ') || 'Naturale'}</div>
               </div>
             </div>

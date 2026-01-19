@@ -38,33 +38,36 @@ export function getUnsplashUrl(query) {
 }
 
 export async function searchUnsplashImages(query) {
-    // Nota: Per un uso reale, dovresti registrare un'app su Unsplash Developers e ottenere una Access Key.
-    // Usiamo una chiave pubblica di esempio per dimostrazione (potrebbe scadere o avere limiti).
-    const clientId = 'v6fE8U6M7tU_z_J3l-1_W_z_J3l-1_W_z_J3l-1_W'; // Esempio, sostituire con una reale
-    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=12&client_id=v6fE8U6M7tU_z_J3l-1_W_z_J3l-1_W_z_J3l-1_W`;
+    const clientId = 'v6fE8U6M7tU_z_J3l-1_W_z_J3l-1_W_z_J3l-1_W'; // Esempio
     
     try {
-        // Fallback: Se non abbiamo una chiave valida, simuliamo una ricerca o usiamo un servizio gratuito senza chiave
-        // Per ora, proviamo a usare un endpoint pubblico di ricerca se possibile
-        const response = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=12&client_id=7u0U-S6R9H8-K-1_W_z_J3l-1_W_z_J3l-1_W`);
+        // Tentativo 1: API ufficiale con una chiave (anche se probabilmente non valida)
+        const response = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=12&client_id=${clientId}`);
         
-        // Se la chiave sopra non funziona (molto probabile essendo casuale), 
-        // usiamo un metodo alternativo per la demo se necessario, 
-        // ma la struttura deve essere quella reale.
-        
-        if (!response.ok) {
-            console.warn('Unsplash API key non valida o limite raggiunto. Usando fallback.');
-            return [];
+        if (response.ok) {
+            const data = await response.json();
+            if (data.results && data.results.length > 0) {
+                return data.results.map(img => ({
+                    name: img.alt_description || query,
+                    url: img.urls.regular,
+                    thumb: img.urls.small,
+                    author: img.user.name,
+                    link: img.links.html
+                }));
+            }
         }
 
-        const data = await response.json();
-        return data.results.map(img => ({
-            name: img.alt_description || query,
-            url: img.urls.small,
-            thumb: img.urls.thumb,
-            author: img.user.name,
-            link: img.links.html
+        // Tentativo 2: Fallback tramite servizio affidabile (LoremFlickr è ottimo per parole chiave)
+        console.warn('Unsplash API non disponibile o limite raggiunto. Uso fallback LoremFlickr.');
+        
+        return Array.from({ length: 12 }).map((_, i) => ({
+            name: `${query} ${i + 1}`,
+            url: `https://loremflickr.com/800/600/food,${encodeURIComponent(query)}?lock=${i}`,
+            thumb: `https://loremflickr.com/400/300/food,${encodeURIComponent(query)}?lock=${i}`,
+            author: 'Placeholder',
+            link: `https://loremflickr.com/`
         }));
+
     } catch (error) {
         console.error('Errore nella ricerca Unsplash:', error);
         return [];

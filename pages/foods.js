@@ -317,12 +317,8 @@ export async function FoodsPage() {
             `;
           } else {
             html += `
-              <div class="col-span-3 mt-1 p-2 bg-blue-50 rounded-lg border border-blue-100 text-center">
-                <a href="${getUnsplashUrl(gallerySearchTerm)}" target="_blank" 
-                   class="inline-flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-[8px] font-bold rounded hover:bg-blue-700 transition-colors">
-                  <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
-                  Vai su Unsplash
-                </a>
+              <div class="col-span-3 mt-1 p-2 bg-gray-50 rounded-lg border border-gray-100 text-center">
+                <p class="text-[8px] text-gray-400">Nessun risultato aggiuntivo.</p>
               </div>
             `;
           }
