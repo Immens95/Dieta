@@ -28,6 +28,7 @@ export async function RecipesPage() {
   let searchTerm = '';
   let selectedUserId = '';
   let selectedMeal = '';
+  let selectedOrigin = '';
   let sortBy = 'name'; // 'name', 'time', 'difficulty', 'kcal'
   let sortOrder = 'asc'; // 'asc', 'desc'
 
@@ -87,6 +88,7 @@ export async function RecipesPage() {
   function render() {
     const selectedUser = users.find(u => u.id === selectedUserId);
     const mealTargetCals = (selectedUser && selectedMeal) ? getMealTargetCals(selectedUser, selectedMeal) : null;
+    const origins = [...new Set(recipes.map(r => r.origin).filter(Boolean))].sort();
 
     let filteredRecipes = recipes.filter(recipe => {
       // Search filter
@@ -98,6 +100,9 @@ export async function RecipesPage() {
 
       // Meal filter
       if (selectedMeal && !(recipe.mealCategories || []).includes(selectedMeal)) return false;
+
+      // Origin filter
+      if (selectedOrigin && recipe.origin !== selectedOrigin) return false;
 
       // User health/intolerance filter
       if (selectedUser) {
@@ -149,7 +154,7 @@ export async function RecipesPage() {
           <div class="flex justify-between items-center">
             <div>
               <h2 class="text-xl font-black text-gray-900">Ricettario</h2>
-              <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">${recipes.length} ricette disponibili</p>
+              <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">${filteredRecipes.length} ricette trovate</p>
             </div>
             <button id="add-recipe-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 text-sm font-black transition-all shadow-md active:scale-95">
               <i data-lucide="plus" class="w-5 h-5"></i>
@@ -185,6 +190,15 @@ export async function RecipesPage() {
                   ${['Colazione', 'Pranzo', 'Cena', 'Merenda'].map(m => `<option value="${m}" ${m === selectedMeal ? 'selected' : ''}>${m}</option>`).join('')}
                 </select>
                 <i data-lucide="clock" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-600 pointer-events-none"></i>
+              </div>
+
+              <!-- Country Filter -->
+              <div class="flex-1 min-w-[140px] relative">
+                <select id="origin-filter" class="w-full pl-9 pr-3 py-2 bg-green-50/50 text-green-700 text-xs font-black rounded-xl border border-green-100 focus:ring-2 focus:ring-green-500 appearance-none cursor-pointer">
+                  <option value="">Tutti i Paesi</option>
+                  ${origins.map(o => `<option value="${o}" ${o === selectedOrigin ? 'selected' : ''}>${o}</option>`).join('')}
+                </select>
+                <i data-lucide="globe" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-600 pointer-events-none"></i>
               </div>
 
               <!-- Sorting -->
@@ -328,6 +342,11 @@ export async function RecipesPage() {
       render();
     });
 
+    container.querySelector('#origin-filter')?.addEventListener('change', (e) => {
+      selectedOrigin = e.target.value;
+      render();
+    });
+
     container.querySelector('#sort-by')?.addEventListener('change', (e) => {
       sortBy = e.target.value;
       render();
@@ -412,6 +431,37 @@ export async function RecipesPage() {
                   <input type="text" name="name" value="${recipe?.name || ''}" required 
                     class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
                     placeholder="Esempio: Pasta al Pomodoro">
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Paese d'Origine</label>
+                  <input type="text" name="origin" value="${recipe?.origin || ''}" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Esempio: Italia, Francia, Messico...">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Tempo Prep.</label>
+                    <input type="text" name="prepTime" value="${recipe?.prepTime || ''}" 
+                      class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                      placeholder="Esempio: 20 min">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Difficoltà</label>
+                    <select name="difficulty" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all">
+                      <option value="Facile" ${recipe?.difficulty === 'Facile' ? 'selected' : ''}>Facile</option>
+                      <option value="Media" ${recipe?.difficulty === 'Media' ? 'selected' : ''}>Media</option>
+                      <option value="Difficile" ${recipe?.difficulty === 'Difficile' ? 'selected' : ''}>Difficile</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Tag (separati da virgola)</label>
+                  <input type="text" name="tags" value="${(recipe?.tags || []).join(', ')}" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Esempio: gluten-free, lactose-free, vegan">
                 </div>
 
                 <div>
@@ -631,6 +681,10 @@ export async function RecipesPage() {
         const data = {
           name: formData.get('name'),
           instructions: formData.get('instructions'),
+          origin: formData.get('origin'),
+          prepTime: formData.get('prepTime'),
+          difficulty: formData.get('difficulty'),
+          tags: formData.get('tags').split(',').map(t => t.trim()).filter(Boolean),
           ingredients: currentIngredients,
           image: selectedImageUrl,
           mealCategories: mealCategories,

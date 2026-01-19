@@ -1,7 +1,9 @@
 export class Store {
   constructor() {
     this.initialized = false;
-    this.version = '1.2.0'; // Increment this to force migration
+    this.version = '1.6.0'; // Increment this to force migration
+    this.forceReset = true; // Temporary flag to ensure cleanup
+    console.log("Store version:", this.version);
     this.data = {
       users: [],
       foods: [],
@@ -20,35 +22,35 @@ export class Store {
       const foodsStored = localStorage.getItem('dieta_foods');
       const recipesStored = localStorage.getItem('dieta_recipes');
       
-      let shouldClear = false;
+      let shouldClear = this.forceReset;
 
       if (storedVersion !== this.version) {
         shouldClear = true;
       }
 
+      // Add a special check for the food count duplication issue
       if (foodsStored && !shouldClear) {
         const parsedFoods = JSON.parse(foodsStored);
-        if (!Array.isArray(parsedFoods) || parsedFoods.length < 1000) {
-          shouldClear = true;
-        }
-      }
-
-      if (recipesStored && !shouldClear) {
-        const parsedRecipes = JSON.parse(recipesStored);
-        if (!Array.isArray(parsedRecipes) || parsedRecipes.length < 1000 || !parsedRecipes[0].prepTime || !parsedRecipes[0].mealCategories) {
+        if (Array.isArray(parsedFoods) && parsedFoods.length > 500) {
+          console.warn("Detected old food database (998 items), forcing cleanup...");
           shouldClear = true;
         }
       }
 
       if (shouldClear) {
         console.warn(`Migration: Clearing old data (v${storedVersion || '0'}) to load new data (v${this.version})`);
-        localStorage.clear(); // Clear everything to be safe
+        // Targeted clear to avoid clearing non-dieta keys if any
+        keys.forEach(k => localStorage.removeItem(`dieta_${k}`));
+        localStorage.removeItem('dieta_version');
+        
         localStorage.setItem('dieta_version', this.version);
         // Force clearing in-memory data as well
         this.data.foods = [];
         this.data.recipes = [];
         this.data.plans = [];
         this.data.users = [];
+        
+        console.log("LocalStorage cleared for Dieta keys.");
       }
     } catch (e) {
       console.error('Error during migration check:', e);
