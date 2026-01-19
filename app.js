@@ -1,4 +1,3 @@
-import { Router } from './utils/router.js';
 import { store } from './utils/store.js';
 import { runTests } from './utils/tests.js';
 
@@ -17,19 +16,93 @@ const routes = {
   '/foods': FoodsPage,
   '/recipes': RecipesPage,
   '/users': UsersPage,
-  '/plans': PlansPage,
-  '/404': () => {
-    const el = document.createElement('div');
-    el.innerHTML = '<h1 class="text-2xl font-bold">404 - Pagina non trovata</h1>';
-    return el;
+  '/plans': PlansPage
+};
+
+async function handleRoute() {
+  const content = document.getElementById('content');
+  if (!content) return;
+
+  // Get current hash, default to #/
+  let hash = window.location.hash || '#/';
+  // Remove #
+  let path = hash.slice(1) || '/';
+  
+  // Normalize path
+  if (!path.startsWith('/')) path = '/' + path;
+
+  const pageFunction = routes[path] || routes['/'];
+  
+  // Show loading
+  content.innerHTML = '<div class="flex items-center justify-center h-full"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>';
+  
+  try {
+    const pageContent = await pageFunction();
+    content.innerHTML = '';
+    content.appendChild(pageContent);
+    
+    // Update active links in bottom nav
+    updateActiveLinks(path);
+    // Update title
+    updateTitle(path);
+  } catch (error) {
+    console.error('Routing error:', error);
+    content.innerHTML = '<div class="p-4 text-red-500">Errore nel caricamento della pagina.</div>';
   }
+}
+
+function updateActiveLinks(currentPath) {
+  document.querySelectorAll('nav a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+    
+    const linkPath = href.replace('#', '') || '/';
+    const isHome = (linkPath === '/' && (currentPath === '/' || currentPath === ''));
+    const isMatch = isHome || (linkPath !== '/' && currentPath.startsWith(linkPath));
+    
+    if (isMatch) {
+      link.classList.add('text-blue-600');
+      link.classList.remove('text-gray-500');
+    } else {
+      link.classList.remove('text-blue-600');
+      link.classList.add('text-gray-500');
+    }
+  });
+}
+
+function updateTitle(path) {
+  const titles = {
+    '/': 'Dashboard',
+    '/foods': 'Alimenti',
+    '/recipes': 'Ricettario',
+    '/users': 'Gestione Utenti',
+    '/plans': 'Piani Alimentari'
+  };
+  
+  const title = titles[path] || 'DietaPro';
+  const titleEl = document.getElementById('page-title');
+  if (titleEl) {
+    titleEl.textContent = title;
+  }
+  
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+}
+
+// Global function to update title (called by pages if needed)
+window.updatePageTitle = () => {
+  let hash = window.location.hash || '#/';
+  let path = hash.slice(1) || '/';
+  updateTitle(path);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.router = new Router(routes, 'content');
+  // Listen for hash changes
+  window.addEventListener('hashchange', handleRoute);
   
   // Initial route
-  window.router.handleRoute();
+  handleRoute();
 
   // PWA Service Worker Registration
   if ('serviceWorker' in navigator) {
@@ -82,37 +155,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
-function updateTitle(normalizedPath) {
-  const titles = {
-    '/': 'Dashboard',
-    '/foods': 'Alimenti',
-    '/recipes': 'Ricettario',
-    '/users': 'Gestione Utenti',
-    '/plans': 'Piani Alimentari'
-  };
-  
-  let path = normalizedPath;
-  if (!path) {
-    path = window.location.pathname;
-    if (window.router && window.router.basePath && path.startsWith(window.router.basePath)) {
-      path = path.slice(window.router.basePath.length);
-    }
-    path = path.replace(/\/$/, '') || '/';
-  }
-  
-  const title = titles[path] || 'DietaPro';
-  
-  const titleEl = document.getElementById('page-title');
-  if (titleEl) {
-    titleEl.textContent = title;
-  }
-  
-  // Re-initialize icons after route change
-  if (window.lucide) {
-    window.lucide.createIcons();
-  }
-}
-
-// Global function to update title (called by router too)
-window.updatePageTitle = updateTitle;

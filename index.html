@@ -7,19 +7,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
-  <script>
-    // Dynamic Base Tag for SPA routing in subdirectories
-    (function() {
-      const parts = window.location.pathname.split('/');
-      // The first part after the leading slash is usually the app directory
-      const baseDir = parts[1] ? '/' + parts[1] + '/' : '/';
-      const baseTag = document.createElement('base');
-      baseTag.href = baseDir;
-      document.head.appendChild(baseTag);
-    })();
-  </script>
-  
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -53,7 +40,7 @@
     <main class="flex-1 flex flex-col min-h-0 overflow-hidden">
       <!-- Header -->
       <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 flex-shrink-0">
-        <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.router.navigate('/')">
+        <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onclick="location.hash = '#/'">
           <div class="p-1.5 bg-blue-600 rounded-lg">
             <i data-lucide="apple" class="w-5 h-5 text-white"></i>
           </div>
@@ -65,7 +52,7 @@
             <i data-lucide="download-cloud" class="w-5 h-5"></i>
             <span class="text-[10px] font-medium">Installa</span>
           </button>
-          <a href="/users" data-link class="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-colors text-blue-600 hover:text-blue-700">
+          <a href="#/users" class="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-colors text-blue-600 hover:text-blue-700">
             <i data-lucide="users" class="w-5 h-5"></i>
             <span class="text-[10px] font-medium">Utenti</span>
           </a>
@@ -80,19 +67,19 @@
 
     <!-- Bottom Navigation -->
     <nav id="sidebar" class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-2 z-50">
-      <a href="/" data-link class="flex flex-col items-center justify-center flex-1 gap-1 py-1 transition-colors text-gray-500">
+      <a href="#/" class="flex flex-col items-center justify-center flex-1 gap-1 py-1 transition-colors text-gray-500">
         <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
         <span class="text-[10px] font-medium">Dashboard</span>
       </a>
-      <a href="/foods" data-link class="flex flex-col items-center justify-center flex-1 gap-1 py-1 transition-colors text-gray-500">
+      <a href="#/foods" class="flex flex-col items-center justify-center flex-1 gap-1 py-1 transition-colors text-gray-500">
         <i data-lucide="utensils" class="w-6 h-6"></i>
         <span class="text-[10px] font-medium">Alimenti</span>
       </a>
-      <a href="/recipes" data-link class="flex flex-col items-center justify-center flex-1 gap-1 py-1 transition-colors text-gray-500">
+      <a href="#/recipes" class="flex flex-col items-center justify-center flex-1 gap-1 py-1 transition-colors text-gray-500">
         <i data-lucide="book-open" class="w-6 h-6"></i>
         <span class="text-[10px] font-medium">Ricette</span>
       </a>
-      <a href="/plans" data-link class="flex flex-col items-center justify-center flex-1 gap-1 py-1 transition-colors text-gray-500">
+      <a href="#/plans" class="flex flex-col items-center justify-center flex-1 gap-1 py-1 transition-colors text-gray-500">
         <i data-lucide="calendar" class="w-6 h-6"></i>
         <span class="text-[10px] font-medium">Piani</span>
       </a>

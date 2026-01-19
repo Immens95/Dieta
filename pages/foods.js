@@ -7,26 +7,63 @@ export async function FoodsPage() {
   container.className = 'space-y-6';
 
   let foods = store.getAll('foods') || [];
+  let currentSearch = '';
+  let currentCategory = 'all';
+  let currentSort = 'name';
+  let currentSortDir = 'asc';
+
+  const categories = ['all', ...new Set(foods.map(f => f.category).filter(Boolean))];
 
   function render() {
     container.innerHTML = `
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 class="text-xl font-black text-gray-900">Database Alimenti</h2>
-          <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">${foods.length} alimenti registrati</p>
-        </div>
-        <div class="flex w-full sm:w-auto gap-2">
-          <div class="relative flex-1 sm:w-64">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-              <i data-lucide="search" class="w-4 h-4"></i>
-            </span>
-            <input type="text" id="food-search" placeholder="Cerca..." 
-              class="block w-full pl-10 pr-3 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm shadow-sm transition-all">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 class="text-xl font-black text-gray-900">Database Alimenti</h2>
+            <p class="text-xs text-gray-500 uppercase font-bold tracking-wider" id="food-count">${foods.length} alimenti registrati</p>
           </div>
           <button id="add-food-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 text-sm font-bold transition-all shadow-md active:scale-95">
             <i data-lucide="plus" class="w-5 h-5"></i>
             <span class="hidden sm:inline">Aggiungi</span>
           </button>
+        </div>
+
+        <!-- Filters and Sorting -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="food-search" placeholder="Cerca..." 
+              class="block w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all">
+          </div>
+
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <i data-lucide="tag" class="w-4 h-4"></i>
+            </span>
+            <select id="food-category" class="block w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all appearance-none">
+              ${categories.map(cat => `<option value="${cat}">${cat === 'all' ? 'Tutte le categorie' : cat}</option>`).join('')}
+            </select>
+          </div>
+
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
+            </span>
+            <select id="food-sort" class="block w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all appearance-none">
+              <option value="name">Ordina per Nome</option>
+              <option value="calories">Ordina per Calorie</option>
+              <option value="protein">Ordina per Proteine</option>
+              <option value="carbs">Ordina per Carboidrati</option>
+              <option value="fats">Ordina per Grassi</option>
+            </select>
+          </div>
+
+          <div class="flex bg-gray-50 rounded-xl border border-gray-200 p-1">
+            <button id="sort-asc" class="flex-1 py-1 rounded-lg text-xs font-bold transition-all ${currentSortDir === 'asc' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}">ASC</button>
+            <button id="sort-desc" class="flex-1 py-1 rounded-lg text-xs font-bold transition-all ${currentSortDir === 'desc' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}">DESC</button>
+          </div>
         </div>
       </div>
 
@@ -135,10 +172,64 @@ export async function FoodsPage() {
     }
 
     // Add event listeners
-    container.querySelector('#food-search').addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase();
-      const filtered = store.getAll('foods').filter(f => f.name.toLowerCase().includes(query));
+    const searchInput = container.querySelector('#food-search');
+    const categorySelect = container.querySelector('#food-category');
+    const sortSelect = container.querySelector('#food-sort');
+    const sortAscBtn = container.querySelector('#sort-asc');
+    const sortDescBtn = container.querySelector('#sort-desc');
+
+    const handleFilterChange = () => {
+      currentSearch = searchInput.value.toLowerCase();
+      currentCategory = categorySelect.value;
+      
+      let filtered = store.getAll('foods').filter(f => {
+        const matchesSearch = f.name.toLowerCase().includes(currentSearch);
+        const matchesCategory = currentCategory === 'all' || f.category === currentCategory;
+        return matchesSearch && matchesCategory;
+      });
+
+      // Sort
+      filtered.sort((a, b) => {
+        let valA = a[currentSort];
+        let valB = b[currentSort];
+
+        if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+        }
+
+        if (valA < valB) return currentSortDir === 'asc' ? -1 : 1;
+        if (valA > valB) return currentSortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+
       updateTable(filtered);
+    };
+
+    searchInput.addEventListener('input', handleFilterChange);
+    categorySelect.addEventListener('change', handleFilterChange);
+    
+    sortSelect.addEventListener('change', (e) => {
+      currentSort = e.target.value;
+      handleFilterChange();
+    });
+
+    sortAscBtn.addEventListener('click', () => {
+      currentSortDir = 'asc';
+      sortAscBtn.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
+      sortAscBtn.classList.remove('text-gray-500');
+      sortDescBtn.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
+      sortDescBtn.classList.add('text-gray-500');
+      handleFilterChange();
+    });
+
+    sortDescBtn.addEventListener('click', () => {
+      currentSortDir = 'desc';
+      sortDescBtn.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
+      sortDescBtn.classList.remove('text-gray-500');
+      sortAscBtn.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
+      sortAscBtn.classList.add('text-gray-500');
+      handleFilterChange();
     });
 
     container.querySelector('#add-food-btn').addEventListener('click', () => {
@@ -169,14 +260,19 @@ export async function FoodsPage() {
 
     if (window.lucide) window.lucide.createIcons();
     if (window.updatePageTitle) window.updatePageTitle();
+    
+    // Apply initial filters/sort
+    handleFilterChange();
   }
 
   function updateTable(filteredFoods) {
     const tbody = container.querySelector('#food-table-body');
     const cardsContainer = container.querySelector('#food-cards-container');
+    const countEl = container.querySelector('#food-count');
     
     if (tbody) tbody.innerHTML = renderTableRows(filteredFoods);
     if (cardsContainer) cardsContainer.innerHTML = renderMobileCards(filteredFoods);
+    if (countEl) countEl.textContent = `${filteredFoods.length} alimenti trovati`;
     
     if (window.lucide) window.lucide.createIcons();
   }
@@ -193,7 +289,7 @@ export async function FoodsPage() {
       );
 
       modal.innerHTML = `
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto pb-24 sm:pb-6">
           <h3 class="text-xl font-bold">${food ? 'Modifica Alimento' : 'Aggiungi Alimento'}</h3>
           <form id="food-form" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -259,9 +355,9 @@ export async function FoodsPage() {
               </div>
             </div>
 
-            <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-              <button type="button" id="close-modal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors text-sm">Annulla</button>
-              <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold transition-colors shadow-sm text-sm">Salva Alimento</button>
+            <div class="fixed sm:static bottom-0 left-0 right-0 p-4 sm:p-0 bg-white sm:bg-transparent border-t sm:border-t-0 border-gray-100 flex gap-3 sm:pt-6 sm:justify-end z-10">
+              <button type="button" id="close-modal" class="flex-1 sm:flex-none px-6 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition-all">Annulla</button>
+              <button type="submit" class="flex-1 sm:flex-none px-8 py-3 bg-blue-600 text-white font-black rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95">Salva Alimento</button>
             </div>
           </form>
         </div>
