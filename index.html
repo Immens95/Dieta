@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DietaPro - Gestione Nutrizionale Moderna</title>
   
+  <script>
+    // Dynamic Base Tag for SPA routing in subdirectories
+    (function() {
+      const parts = window.location.pathname.split('/');
+      // The first part after the leading slash is usually the app directory
+      const baseDir = parts[1] ? '/' + parts[1] + '/' : '/';
+      const baseTag = document.createElement('base');
+      baseTag.href = baseDir;
+      document.head.appendChild(baseTag);
+    })();
+  </script>
+  
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>

@@ -3,6 +3,17 @@ export class Router {
     this.routes = routes;
     this.rootElement = document.getElementById(rootElementId);
     this.currentPath = null;
+    
+    // Determine base path (e.g., "/Dieta" if hosted at localhost/Dieta/)
+    this.basePath = window.location.pathname.replace(/\/$/, '') || '';
+    // If the path ends with a known route, strip it to get the actual base
+    const knownRoutes = Object.keys(routes).filter(r => r !== '/');
+    for (const route of knownRoutes) {
+      if (this.basePath.endsWith(route)) {
+        this.basePath = this.basePath.slice(0, -route.length);
+        break;
+      }
+    }
 
     window.addEventListener('popstate', () => this.handleRoute());
     
@@ -17,12 +28,22 @@ export class Router {
   }
 
   navigate(path) {
-    window.history.pushState({}, '', path);
+    const fullPath = this.basePath + (path === '/' ? '' : path);
+    window.history.pushState({}, '', fullPath || '/');
     this.handleRoute();
   }
 
   async handleRoute() {
-    const path = window.location.pathname.replace(/\/$/, '') || '/';
+    let path = window.location.pathname;
+    
+    // Remove base path from current pathname to get the route
+    if (this.basePath && path.startsWith(this.basePath)) {
+      path = path.slice(this.basePath.length);
+    }
+    
+    // Normalize path
+    path = path.replace(/\/$/, '') || '/';
+    
     const route = this.routes[path] || this.routes['/404'] || this.routes['/'];
     
     this.currentPath = path;
@@ -35,20 +56,26 @@ export class Router {
         const content = await route();
         this.rootElement.innerHTML = '';
         this.rootElement.appendChild(content);
+        
+        // Update page title globally
+        if (window.updatePageTitle) {
+          window.updatePageTitle(path);
+        }
       } catch (error) {
         console.error('Routing error:', error);
         this.rootElement.innerHTML = '<div class="p-4 text-red-500">Errore nel caricamento della pagina.</div>';
       }
     }
     
-    // Update active links in sidebar
+    // Update active links
     this.updateActiveLinks();
   }
 
   updateActiveLinks() {
     document.querySelectorAll('a[data-link]').forEach(link => {
-      const isHome = link.getAttribute('href') === '/' && (this.currentPath === '/' || this.currentPath === '');
-      const isOther = link.getAttribute('href') !== '/' && this.currentPath.startsWith(link.getAttribute('href'));
+      const href = link.getAttribute('href');
+      const isHome = href === '/' && (this.currentPath === '/' || this.currentPath === '');
+      const isOther = href !== '/' && this.currentPath.startsWith(href);
       
       if (isHome || isOther) {
         link.classList.add('text-blue-600');

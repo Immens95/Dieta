@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-function updateTitle() {
+function updateTitle(normalizedPath) {
   const titles = {
     '/': 'Dashboard',
     '/foods': 'Alimenti',
@@ -45,9 +45,14 @@ function updateTitle() {
     '/users': 'Gestione Utenti',
     '/plans': 'Piani Alimentari'
   };
-  const path = window.location.pathname.replace(/\/$/, '') || '/';
+  
+  const path = normalizedPath || window.location.pathname.replace(/\/$/, '') || '/';
   const title = titles[path] || 'DietaPro';
-  document.getElementById('page-title').textContent = title;
+  
+  const titleEl = document.getElementById('page-title');
+  if (titleEl) {
+    titleEl.textContent = title;
+  }
   
   // Re-initialize icons after route change
   if (window.lucide) {

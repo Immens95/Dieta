@@ -1,10 +1,11 @@
 import { store } from '../utils/store.js';
 
 export async function UsersPage() {
+  await store.ensureInitialized();
   const container = document.createElement('div');
   container.className = 'space-y-6';
 
-  let users = store.getAll('users');
+  let users = store.getAll('users') || [];
 
   function render() {
     container.innerHTML = `
@@ -48,7 +49,7 @@ export async function UsersPage() {
                 </td>
                 <td class="px-6 py-4">
                   <div class="text-sm text-gray-900">${user.weight}kg / ${user.height}cm</div>
-                  <div class="text-xs text-gray-500">${user.age} anni</div>
+                  <div class="text-xs text-gray-500">${user.age} anni (${user.sex === 'female' ? 'Donna' : 'Uomo'})</div>
                 </td>
                 <td class="px-6 py-4">
                   <div class="text-sm text-gray-900">Target: ${user.targetWeight}kg</div>
@@ -121,6 +122,13 @@ export async function UsersPage() {
               <select name="role" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 <option value="user" ${user?.role === 'user' ? 'selected' : ''}>User</option>
                 <option value="admin" ${user?.role === 'admin' ? 'selected' : ''}>Admin</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Genere</label>
+              <select name="sex" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                <option value="male" ${user?.sex === 'male' ? 'selected' : ''}>Uomo</option>
+                <option value="female" ${user?.sex === 'female' ? 'selected' : ''}>Donna</option>
               </select>
             </div>
             <div>

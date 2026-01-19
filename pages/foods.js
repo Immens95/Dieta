@@ -1,25 +1,32 @@
 import { store } from '../utils/store.js';
 
 export async function FoodsPage() {
+  await store.ensureInitialized();
   const container = document.createElement('div');
   container.className = 'space-y-6';
 
-  let foods = store.getAll('foods');
+  let foods = store.getAll('foods') || [];
 
   function render() {
     container.innerHTML = `
       <div class="flex justify-between items-center">
-        <div class="relative w-64">
-          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-            <i data-lucide="search" class="w-4 h-4"></i>
-          </span>
-          <input type="text" id="food-search" placeholder="Cerca alimento..." 
-            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm">
+        <div>
+          <h2 class="text-lg font-bold text-gray-900">Database Alimenti</h2>
+          <p class="text-sm text-gray-500">${foods.length} alimenti disponibili</p>
         </div>
-        <button id="add-food-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          Aggiungi Alimento
-        </button>
+        <div class="flex gap-3">
+          <div class="relative w-64">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="food-search" placeholder="Cerca alimento..." 
+              class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+          <button id="add-food-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Aggiungi
+          </button>
+        </div>
       </div>
 
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

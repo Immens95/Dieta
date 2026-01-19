@@ -1,14 +1,15 @@
 import { store } from '../utils/store.js';
 
 export async function PlansPage() {
+  await store.ensureInitialized();
   const container = document.createElement('div');
   container.className = 'space-y-6';
 
-  let plans = store.getAll('plans');
-  let users = store.getAll('users');
-  let recipes = store.getAll('recipes');
+  let plans = store.getAll('plans') || [];
+  let users = store.getAll('users') || [];
+  let recipes = store.getAll('recipes') || [];
   let currentPlan = plans[0] || { days: {} };
-  let selectedUser = users.find(u => u.id === currentPlan.userId) || users[0];
+  let selectedUser = users.find(u => u.id === currentPlan.userId) || users[0] || { name: 'Utente' };
 
   const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
   const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];

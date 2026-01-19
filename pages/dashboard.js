@@ -1,10 +1,11 @@
 import { store } from '../utils/store.js';
 
 export async function DashboardPage() {
+  await store.ensureInitialized();
   const container = document.createElement('div');
   container.className = 'space-y-8 animate-fade-in';
 
-  let allUsers = store.getAll('users');
+  let allUsers = store.getAll('users') || [];
   let selectedUserIds = [allUsers[0]?.id].filter(Boolean); // Start with the first user if available
 
   function calculateUserStats(user) {

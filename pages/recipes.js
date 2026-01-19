@@ -1,11 +1,12 @@
 import { store } from '../utils/store.js';
 
 export async function RecipesPage() {
+  await store.ensureInitialized();
   const container = document.createElement('div');
   container.className = 'space-y-6';
 
-  let recipes = store.getAll('recipes');
-  let foods = store.getAll('foods');
+  let recipes = store.getAll('recipes') || [];
+  let foods = store.getAll('foods') || [];
 
   function calculateTotals(recipeIngredients) {
     return recipeIngredients.reduce((acc, item) => {

@@ -1,5 +1,6 @@
 export class Store {
   constructor() {
+    this.initialized = false;
     this.data = {
       users: [],
       foods: [],
@@ -11,23 +12,68 @@ export class Store {
 
   async init() {
     const keys = ['users', 'foods', 'recipes', 'plans'];
-    for (const key of keys) {
+    
+    // Clear old data if it's the 3-item version or corrupted
+    try {
+      const foodsStored = localStorage.getItem('dieta_foods');
+      if (foodsStored) {
+        const parsed = JSON.parse(foodsStored);
+        // Check if empty or contains the old sample data
+        if (!Array.isArray(parsed) || parsed.length === 0 || (parsed.length < 10 && parsed.some(f => f.name === 'Petto di Pollo'))) {
+          console.warn('Migration: Clearing corrupted or old food data');
+          localStorage.removeItem('dieta_foods');
+          localStorage.removeItem('dieta_recipes');
+          localStorage.removeItem('dieta_plans');
+        }
+      }
+    } catch (e) {
+      console.error('Error during migration check:', e);
+      localStorage.clear(); // Nuclear option if JSON is malformed
+    }
+
+    const loadPromises = keys.map(async (key) => {
       const stored = localStorage.getItem(`dieta_${key}`);
+      
       if (stored) {
-        this.data[key] = JSON.parse(stored);
-      } else {
         try {
-          const response = await fetch(`./data/${key}.json`);
-          const initialData = await response.json();
-          this.data[key] = initialData;
-          this.save(key);
+          this.data[key] = JSON.parse(stored);
+        } catch (e) {
+          console.error(`Error parsing stored ${key}:`, e);
+          localStorage.removeItem(`dieta_${key}`);
+        }
+      }
+      
+      // If not loaded from storage (or storage was cleared), fetch from JSON
+      if (!this.data[key] || this.data[key].length === 0) {
+        try {
+          const response = await fetch(`./data/${key}.json?v=${Date.now()}`);
+          if (response.ok) {
+            const initialData = await response.json();
+            this.data[key] = initialData;
+            this.save(key);
+            console.log(`Loaded ${key} from JSON:`, initialData.length, 'items');
+          }
         } catch (error) {
           console.error(`Error loading initial data for ${key}:`, error);
         }
       }
-    }
-    // Notify subscribers
+    });
+    
+    await Promise.all(loadPromises);
+    this.initialized = true;
     this.notify();
+  }
+
+  async ensureInitialized() {
+    if (this.initialized) return;
+    return new Promise(resolve => {
+      const unsubscribe = this.subscribe(() => {
+        if (this.initialized) {
+          unsubscribe();
+          resolve();
+        }
+      });
+    });
   }
 
   save(key) {
