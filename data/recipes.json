@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1",
+    "name": "Pollo e Riso",
+    "ingredients": [
+      { "foodId": "1", "amount": 150 },
+      { "foodId": "2", "amount": 100 },
+      { "foodId": "3", "amount": 10 }
+    ],
+    "instructions": "Cuoci il riso. Griglia il pollo. Condisci con olio."
+  }
+]

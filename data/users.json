@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "name": "Mario Rossi",
+    "email": "mario@example.com",
+    "role": "admin",
+    "age": 30,
+    "height": 180,
+    "weight": 80,
+    "targetWeight": 75,
+    "activityLevel": "medium",
+    "goalWeeks": 12
+  },
+  {
+    "id": "2",
+    "name": "Luigi Verdi",
+    "email": "luigi@example.com",
+    "role": "user",
+    "age": 25,
+    "height": 175,
+    "weight": 70,
+    "targetWeight": 70,
+    "activityLevel": "light",
+    "goalWeeks": 8
+  }
+]

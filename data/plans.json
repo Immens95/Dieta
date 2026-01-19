@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "userId": "1",
+    "name": "Piano Definizione",
+    "days": {
+      "monday": {
+        "breakfast": [],
+        "lunch": ["1"],
+        "dinner": []
+      }
+    }
+  }
+]
