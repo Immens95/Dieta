@@ -34,6 +34,15 @@ table {
   border-spacing: 0;
 }
 
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 3s ease-in-out infinite;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }

@@ -167,9 +167,9 @@ export async function PlansPage() {
       </div>
 
       <div class="grid grid-cols-1 gap-6">
-        ${viewMode === 'day' ? renderDayView(plan, dailyCals) : 
-          viewMode === 'week' ? renderWeekView(plan, dailyCals) : 
-          renderMonthView(plan, dailyCals)}
+        ${viewMode === 'day' ? renderDayView(plan, dailyCals, user) : 
+          viewMode === 'week' ? renderWeekView(plan, dailyCals, user) : 
+          renderMonthView(plan, dailyCals, user)}
       </div>
     `;
 
@@ -254,7 +254,7 @@ export async function PlansPage() {
     if (window.lucide) window.lucide.createIcons();
   }
 
-  function renderDayView(plan, dailyCals) {
+  function renderDayView(plan, dailyCals, user) {
     const dayKey = dayKeys[selectedDayIndex];
     return `
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -323,7 +323,7 @@ export async function PlansPage() {
     `;
   }
 
-  function renderWeekView(plan, dailyCals) {
+  function renderWeekView(plan, dailyCals, user) {
     return `
       <div class="grid grid-cols-1 xl:grid-cols-7 gap-4 overflow-x-auto pb-4">
         ${dayKeys.map((dayKey, dayIdx) => {
@@ -390,7 +390,7 @@ export async function PlansPage() {
     `;
   }
 
-  function renderMonthView(plan, dailyCals) {
+  function renderMonthView(plan, dailyCals, user) {
     return `
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
         <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">

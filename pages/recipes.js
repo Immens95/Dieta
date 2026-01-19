@@ -1,5 +1,5 @@
 import { store } from '../utils/store.js';
-import { recipeImages, getUnsplashUrl } from '../utils/imageGallery.js';
+import { recipeImages, getUnsplashUrl, searchUnsplashImages } from '../utils/imageGallery.js';
 
 export async function RecipesPage() {
   await store.ensureInitialized();
@@ -492,7 +492,7 @@ export async function RecipesPage() {
 
       attachImageOptionListeners();
 
-      gallerySearch.addEventListener('input', (e) => {
+      gallerySearch.addEventListener('input', async (e) => {
         gallerySearchTerm = e.target.value;
         const filtered = recipeImages.filter(img => 
           img.name.toLowerCase().includes(gallerySearchTerm.toLowerCase())
@@ -506,16 +506,38 @@ export async function RecipesPage() {
         `).join('') : '<p class="col-span-2 text-center text-xs text-gray-400 py-4">Nessuna immagine locale trovata</p>';
 
         if (gallerySearchTerm.length > 2) {
-          html += `
-            <div class="col-span-2 mt-2 p-3 bg-blue-50 rounded-lg border border-blue-100 text-center">
-              <p class="text-[10px] text-blue-600 mb-2">Cerchi altro? Trova immagini gratuite su Unsplash:</p>
-              <a href="${getUnsplashUrl(gallerySearchTerm)}" target="_blank" 
-                 class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-md hover:bg-blue-700 transition-colors">
-                <i data-lucide="external-link" class="w-3 h-3"></i>
-                Cerca "${gallerySearchTerm}" su Unsplash
-              </a>
-            </div>
-          `;
+          const unsplashResults = await searchUnsplashImages(gallerySearchTerm);
+          
+          if (unsplashResults.length > 0) {
+            html += `
+              <div class="col-span-2 mt-2 pt-2 border-t border-gray-100">
+                <p class="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wider">Risultati da Unsplash</p>
+                <div class="grid grid-cols-2 gap-2">
+                  ${unsplashResults.map(img => `
+                    <div class="relative group">
+                      <img src="${img.thumb}" alt="${img.name}" 
+                        class="w-full h-20 object-cover rounded-md cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all image-option ${selectedImageUrl === img.url ? 'ring-2 ring-blue-600' : ''}" 
+                        data-url="${img.url}">
+                      <div class="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[8px] p-1 opacity-0 group-hover:opacity-100 transition-opacity rounded-b-md truncate">
+                        ${img.author}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          } else {
+            html += `
+              <div class="col-span-2 mt-2 p-3 bg-blue-50 rounded-lg border border-blue-100 text-center">
+                <p class="text-[10px] text-blue-600 mb-2">Cerchi altro? Trova immagini gratuite su Unsplash:</p>
+                <a href="${getUnsplashUrl(gallerySearchTerm)}" target="_blank" 
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-md hover:bg-blue-700 transition-colors">
+                  <i data-lucide="external-link" class="w-3 h-3"></i>
+                  Cerca "${gallerySearchTerm}" su Unsplash (Esterno)
+                </a>
+              </div>
+            `;
+          }
         }
         
         galleryContainer.innerHTML = html;

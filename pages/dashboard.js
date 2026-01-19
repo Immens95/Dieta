@@ -360,7 +360,27 @@ export async function DashboardPage() {
 
   function render() {
     container.innerHTML = `
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div id="install-banner" class="hidden bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden animate-bounce-subtle">
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="p-3 bg-white/20 rounded-xl backdrop-blur-md">
+              <i data-lucide="download-cloud" class="w-8 h-8"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold">Installa DietaPro sul tuo dispositivo</h3>
+              <p class="text-sm text-blue-100">Accedi rapidamente e usa l'app anche offline.</p>
+            </div>
+          </div>
+          <button id="dashboard-install-btn" class="w-full md:w-auto px-6 py-3 bg-white text-blue-600 font-bold rounded-xl shadow-md hover:bg-blue-50 transition-all flex items-center justify-center gap-2 active:scale-95">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+            Installa Ora
+          </button>
+        </div>
+        <!-- Background decoration -->
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+      </div>
+
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 class="text-2xl font-bold text-gray-800">Panoramica Nutrizionale</h2>
           <p class="text-sm text-gray-500">Monitora gli obiettivi e le statistiche degli utenti selezionati</p>
@@ -564,6 +584,31 @@ export async function DashboardPage() {
         const user = allUsers.find(u => u.id === id);
         if (user) showWeightUpdateModal(user);
       });
+    });
+
+    // PWA Install Handling
+    const banner = container.querySelector('#install-banner');
+    const dashboardInstallBtn = container.querySelector('#dashboard-install-btn');
+    
+    // Check if prompt is already available in window
+    if (window.deferredPrompt) {
+      banner?.classList.remove('hidden');
+    }
+
+    // Listen for the custom event we'll dispatch from app.js
+    window.addEventListener('pwa-install-available', () => {
+      banner?.classList.remove('hidden');
+    });
+
+    dashboardInstallBtn?.addEventListener('click', async () => {
+      if (window.deferredPrompt) {
+        window.deferredPrompt.prompt();
+        const { outcome } = await window.deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          banner?.classList.add('hidden');
+          window.deferredPrompt = null;
+        }
+      }
     });
 
     // Event Listeners for Dynamic Actions

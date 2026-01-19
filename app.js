@@ -41,31 +41,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // PWA Install Prompt Handling
-  let deferredPrompt;
+  window.deferredPrompt = null;
   const installBtn = document.getElementById('install-btn');
 
   window.addEventListener('beforeinstallprompt', (e) => {
     // Prevent Chrome 67 and earlier from automatically showing the prompt
     e.preventDefault();
     // Stash the event so it can be triggered later.
-    deferredPrompt = e;
+    window.deferredPrompt = e;
     // Update UI to notify the user they can add to home screen
     if (installBtn) {
       installBtn.classList.remove('hidden');
       installBtn.classList.add('flex');
     }
+    // Notify other components
+    window.dispatchEvent(new CustomEvent('pwa-install-available'));
   });
 
   if (installBtn) {
     installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
+      if (!window.deferredPrompt) return;
       // Show the prompt
-      deferredPrompt.prompt();
+      window.deferredPrompt.prompt();
       // Wait for the user to respond to the prompt
-      const { outcome } = await deferredPrompt.userChoice;
+      const { outcome } = await window.deferredPrompt.userChoice;
       console.log(`User response to the install prompt: ${outcome}`);
       // We've used the prompt, and can't use it again, throw it away
-      deferredPrompt = null;
+      window.deferredPrompt = null;
       // Hide the install button
       installBtn.classList.add('hidden');
       installBtn.classList.remove('flex');
