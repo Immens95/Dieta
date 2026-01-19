@@ -1,20 +1,17 @@
-﻿{
-    "value":  [
-                  {
-                      "id":  "1",
-                      "name":  "Pomodoro",
-                      "calories":  18,
-                      "protein":  0.9,
-                      "carbs":  3.9,
-                      "fats":  0.2,
-                      "unit":  "100g",
-                      "image":  "https://loremflickr.com/300/200/food,pomodoro",
-                      "tags":  [
-                                   "gluten-free",
-                                   "lactose-free",
-                                   "low-acid"
-                               ]
-                  }
-              ],
-    "Count":  1
-}
+[
+  {
+    "id": "1",
+    "name": "Pomodoro",
+    "calories": 18,
+    "protein": 0.9,
+    "carbs": 3.9,
+    "fats": 0.2,
+    "unit": "100g",
+    "image": "https://loremflickr.com/300/200/food,pomodoro",
+    "tags": [
+      "gluten-free",
+      "lactose-free",
+      "low-acid"
+    ]
+  }
+]
