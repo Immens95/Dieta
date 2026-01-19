@@ -26,15 +26,10 @@ const routes = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const router = new Router(routes, 'content');
+  window.router = new Router(routes, 'content');
   
   // Initial route
-  router.handleRoute();
-
-  // Listen for title changes
-  window.addEventListener('popstate', () => {
-    updateTitle();
-  });
+  window.router.handleRoute();
 });
 
 function updateTitle(normalizedPath) {
@@ -46,7 +41,15 @@ function updateTitle(normalizedPath) {
     '/plans': 'Piani Alimentari'
   };
   
-  const path = normalizedPath || window.location.pathname.replace(/\/$/, '') || '/';
+  let path = normalizedPath;
+  if (!path) {
+    path = window.location.pathname;
+    if (window.router && window.router.basePath && path.startsWith(window.router.basePath)) {
+      path = path.slice(window.router.basePath.length);
+    }
+    path = path.replace(/\/$/, '') || '/';
+  }
+  
   const title = titles[path] || 'DietaPro';
   
   const titleEl = document.getElementById('page-title');

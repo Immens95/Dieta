@@ -73,7 +73,12 @@ export async function UsersPage() {
     `;
 
     // Event listeners
-    container.querySelector('#add-user-btn').addEventListener('click', () => showUserModal());
+    const onSave = () => {
+      users = store.getAll('users');
+      render();
+    };
+
+    container.querySelector('#add-user-btn').addEventListener('click', () => showUserModal(null, onSave));
     
     container.addEventListener('click', (e) => {
       const row = e.target.closest('.user-row');
@@ -84,8 +89,7 @@ export async function UsersPage() {
         const id = deleteBtn.getAttribute('data-id');
         if (confirm('Eliminare questo utente?')) {
           store.delete('users', id);
-          users = store.getAll('users');
-          render();
+          onSave();
         }
         return;
       }
@@ -93,7 +97,7 @@ export async function UsersPage() {
       if (editBtn || row) {
         const id = (editBtn || row).getAttribute('data-id');
         const user = store.getById('users', id);
-        showUserModal(user);
+        showUserModal(user, onSave);
       }
     });
 
@@ -101,7 +105,11 @@ export async function UsersPage() {
     if (window.updatePageTitle) window.updatePageTitle();
   }
 
-  function showUserModal(user = null) {
+  render();
+  return container;
+}
+
+export function showUserModal(user = null, onSave = null) {
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
     modal.innerHTML = `
@@ -161,7 +169,7 @@ export async function UsersPage() {
               </select>
             </div>
             <div class="col-span-2">
-              <label class="block text-sm font-medium text-gray-700">Patologie (es: reflusso, ibs, endometriosi)</label>
+              <label class="block text-sm font-medium text-gray-700">Patologie (es: reflusso, artrite, sclerosi multipla)</label>
               <input type="text" name="healthConditions" value="${user?.healthConditions?.join(', ') || ''}" placeholder="Separati da virgola" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
             </div>
             <div class="col-span-2">
@@ -176,6 +184,24 @@ export async function UsersPage() {
                 <option value="high" ${user?.sensitivity === 'high' ? 'selected' : ''}>Molto Sensibile</option>
               </select>
             </div>
+
+            <!-- Preferences Section -->
+            <div class="col-span-2 mt-4 pt-4 border-t border-gray-100">
+              <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <i data-lucide="heart" class="w-4 h-4 text-red-500"></i>
+                Preferenze Alimentari
+              </h4>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Cibi/Ingredienti Preferiti</label>
+                  <input type="text" name="likedFoods" value="${user?.likedFoods?.join(', ') || ''}" placeholder="Esempio: salmone, avocado, noci" class="block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Cibi/Ingredienti Sconsigliati</label>
+                  <input type="text" name="dislikedFoods" value="${user?.dislikedFoods?.join(', ') || ''}" placeholder="Esempio: peperoni, cipolla, latte" class="block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
@@ -187,12 +213,12 @@ export async function UsersPage() {
     `;
 
     document.body.appendChild(modal);
+    if (window.lucide) window.lucide.createIcons();
 
+    modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
     modal.addEventListener('click', (e) => {
       if (e.target === modal) modal.remove();
     });
-
-    modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
     modal.querySelector('#user-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
@@ -206,6 +232,8 @@ export async function UsersPage() {
       // Convert lists
       data.healthConditions = data.healthConditions ? data.healthConditions.split(',').map(s => s.trim().toLowerCase()).filter(s => s) : [];
       data.intolerances = data.intolerances ? data.intolerances.split(',').map(s => s.trim().toLowerCase()).filter(s => s) : [];
+      data.likedFoods = data.likedFoods ? data.likedFoods.split(',').map(s => s.trim().toLowerCase()).filter(s => s) : [];
+      data.dislikedFoods = data.dislikedFoods ? data.dislikedFoods.split(',').map(s => s.trim().toLowerCase()).filter(s => s) : [];
 
       if (user) {
         store.update('users', user.id, data);
@@ -214,11 +242,7 @@ export async function UsersPage() {
       }
 
       modal.remove();
-      users = store.getAll('users');
-      render();
+      if (onSave) onSave();
+      else window.location.reload(); // Fallback if no specific refresh logic
     });
   }
-
-  render();
-  return container;
-}

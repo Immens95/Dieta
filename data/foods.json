@@ -286,7 +286,7 @@
         "carbs": 21.4,
         "fats": 7.7,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,latte,avena",
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,latte,d'avena",
         "tags": [
             "gluten-free",
             "lactose-free"
@@ -919,7 +919,7 @@
         "carbs": 30.5,
         "fats": 6.4,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,olio,extravergine,oliva",
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,olio,extravergine,d'oliva",
         "tags": [
             "gluten-free",
             "lactose-free"
@@ -1282,7 +1282,7 @@
         "carbs": 31.1,
         "fats": 16.8,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,burro,arachidi",
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,burro,d'arachidi,(100%)",
         "tags": [
             "gluten-free"
         ]
@@ -2348,7 +2348,7 @@
         "carbs": 21.9,
         "fats": 3.5,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,burro,arachidi",
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,burro,d'arachidi,(100%)",
         "tags": [
             "gluten-free",
             "lactose-free"
@@ -4606,7 +4606,7 @@
         "carbs": 5.7,
         "fats": 1.8,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,burro,arachidi",
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,burro,d'arachidi,(100%)",
         "tags": [
             "gluten-free",
             "lactose-free"
@@ -6597,7 +6597,7 @@
         "carbs": 6.9,
         "fats": 16.3,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,burro,arachidi",
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,burro,d'arachidi,(100%)",
         "tags": [
             "gluten-free",
             "lactose-free"

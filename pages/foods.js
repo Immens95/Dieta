@@ -241,6 +241,9 @@ export async function FoodsPage() {
     });
 
     modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
     modal.querySelector('#food-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);

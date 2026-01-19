@@ -1,47 +1,30 @@
 [
-  {
-    "id": "1",
-    "name": "Mario Rossi",
-    "email": "mario@example.com",
-    "role": "admin",
-    "age": 30,
-    "height": 180,
-    "weight": 80,
-    "targetWeight": 75,
-    "activityLevel": "medium",
-    "goalWeeks": 12,
-    "healthConditions": ["reflux"],
-    "intolerances": ["lactose"],
-    "sensitivity": "medium",
-    "weightHistory": [
-      { "date": "2026-01-10", "actual": 81.0, "estimated": 81.0 },
-      { "date": "2026-01-11", "actual": 80.8, "estimated": 80.9 },
-      { "date": "2026-01-12", "actual": 80.7, "estimated": 80.8 },
-      { "date": "2026-01-13", "actual": 80.5, "estimated": 80.7 },
-      { "date": "2026-01-14", "actual": 80.6, "estimated": 80.6 },
-      { "date": "2026-01-15", "actual": 80.4, "estimated": 80.5 },
-      { "date": "2026-01-16", "actual": 80.2, "estimated": 80.4 },
-      { "date": "2026-01-17", "actual": 80.1, "estimated": 80.3 },
-      { "date": "2026-01-18", "actual": 80.0, "estimated": 80.2 },
-      { "date": "2026-01-19", "actual": 80.0, "estimated": 80.1 }
-    ]
-  },
-  {
-    "id": "2",
-    "name": "Luigi Verdi",
-    "email": "luigi@example.com",
-    "role": "user",
-    "age": 25,
-    "height": 175,
-    "weight": 70,
-    "targetWeight": 70,
-    "activityLevel": "light",
-    "goalWeeks": 8,
-    "healthConditions": ["ibs"],
-    "intolerances": ["gluten"],
-    "sensitivity": "high",
-    "weightHistory": [
-      { "date": "2026-01-19", "actual": 70.0, "estimated": 70.0 }
-    ]
-  }
+    {
+        "id": "1",
+        "name": "Mario Rossi",
+        "email": "mario@example.com",
+        "role": "admin",
+        "age": 30,
+        "height": 180,
+        "weight": 80,
+        "targetWeight": 75,
+        "activityLevel": "medium",
+        "goalWeeks": 12
+    },
+    {
+        "id": "2",
+        "name": "Sara Verdi",
+        "email": "sara@example.com",
+        "role": "user",
+        "age": 25,
+        "height": 175,
+        "weight": 70,
+        "targetWeight": 70,
+        "activityLevel": "light",
+        "goalWeeks": 8,
+        "sex": "female",
+        "healthConditions": [],
+        "intolerances": [],
+        "sensitivity": "low"
+    }
 ]

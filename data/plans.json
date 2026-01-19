@@ -6,100 +6,100 @@
         "days": {
             "monday": {
                 "breakfast": [
-                    "94"
+                    "311"
                 ],
                 "lunch": [
-                    "81"
+                    "126"
                 ],
                 "dinner": [
-                    "251"
+                    "208"
                 ],
                 "snacks": [
-                    "286"
+                    "305"
                 ]
             },
             "tuesday": {
                 "breakfast": [
-                    "292"
+                    "276"
                 ],
                 "lunch": [
-                    "318"
+                    "466"
                 ],
                 "dinner": [
-                    "55"
+                    "427"
                 ],
                 "snacks": [
-                    "253"
+                    "134"
                 ]
             },
             "wednesday": {
                 "breakfast": [
-                    "443"
+                    "236"
                 ],
                 "lunch": [
-                    "468"
+                    "106"
                 ],
                 "dinner": [
-                    "308"
+                    "112"
                 ],
                 "snacks": [
-                    "441"
+                    "495"
                 ]
             },
             "thursday": {
                 "breakfast": [
-                    "262"
+                    "16"
                 ],
                 "lunch": [
-                    "277"
+                    "467"
                 ],
                 "dinner": [
-                    "172"
+                    "355"
                 ],
                 "snacks": [
-                    "152"
+                    "59"
                 ]
             },
             "friday": {
                 "breakfast": [
-                    "229"
+                    "427"
                 ],
                 "lunch": [
-                    "435"
+                    "279"
                 ],
                 "dinner": [
-                    "316"
+                    "450"
                 ],
                 "snacks": [
-                    "199"
+                    "59"
                 ]
             },
             "saturday": {
                 "breakfast": [
-                    "198"
+                    "487"
                 ],
                 "lunch": [
-                    "280"
+                    "271"
                 ],
                 "dinner": [
-                    "482"
+                    "86"
                 ],
                 "snacks": [
-                    "406"
+                    "75"
                 ]
             },
             "sunday": {
                 "breakfast": [
-                    "313"
+                    "185"
                 ],
                 "lunch": [
-                    "359"
+                    "49"
                 ],
                 "dinner": [
-                    "439"
+                    "355"
                 ],
                 "snacks": [
-                    "14"
+                    "31"
                 ]
             }
         }

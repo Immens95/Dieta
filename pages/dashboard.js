@@ -9,6 +9,15 @@ export async function DashboardPage() {
   let selectedUserIds = [allUsers[0]?.id].filter(Boolean); // Start with the first user if available
 
   function calculateUserStats(user) {
+    if (user.manualTargetKcal) {
+      return {
+        targetKcal: user.manualTargetKcal,
+        protein: user.manualProtein,
+        carbs: user.manualCarbs,
+        fats: user.manualFats
+      };
+    }
+
     // Basic BMR calculation (Mifflin-St Jeor)
     const bmr = user.sex === 'male'
       ? 10 * user.weight + 6.25 * user.height - 5 * user.age + 5
@@ -40,10 +49,15 @@ export async function DashboardPage() {
       fatsPct = 0.2; // Lower fats for reflux
       carbsPct = 0.5;
     }
-    if (conditions.includes('endometriosis') || conditions.includes('endometriosi')) {
+    if (conditions.includes('endometriosis') || conditions.includes('endometriosi') || conditions.includes('artrite')) {
       proteinPct = 0.35; // Higher protein/anti-inflammatory focus
       fatsPct = 0.3;
       carbsPct = 0.35;
+    }
+    if (conditions.includes('sclerosi multipla')) {
+      proteinPct = 0.3;
+      fatsPct = 0.4; // Focus on healthy fats (Omega-3)
+      carbsPct = 0.3;
     }
     if (user.sensitivity === 'high') {
       // More balanced for high sensitivity
@@ -68,6 +82,13 @@ export async function DashboardPage() {
       avoid: []
     };
 
+    const likedFoods = (user.likedFoods || []).map(f => f.toLowerCase());
+    const dislikedFoods = (user.dislikedFoods || []).map(f => f.toLowerCase());
+
+    // User preferences (priority)
+    likedFoods.forEach(food => recommendations.recommended.push({ name: food, reason: 'Preferito da te' }));
+    dislikedFoods.forEach(food => recommendations.avoid.push({ name: food, reason: 'Sconsigliato da te' }));
+
     foods.forEach(food => {
       let score = 0;
       let reason = [];
@@ -89,6 +110,8 @@ export async function DashboardPage() {
       const conditions = (user.healthConditions || []).map(c => c.toLowerCase());
       const hasReflux = conditions.includes('reflux') || conditions.includes('reflusso');
       const hasIBS = conditions.includes('ibs');
+      const hasArtrite = conditions.includes('artrite');
+      const hasMS = conditions.includes('sclerosi multipla');
 
       if (hasReflux) {
         if (food.tags?.includes('acidic')) {
@@ -100,6 +123,15 @@ export async function DashboardPage() {
 
       if (hasIBS) {
         if (food.tags?.includes('ibs-friendly')) score += 2;
+      }
+
+      if (hasArtrite || hasMS) {
+        if (food.tags?.includes('anti-inflammatory')) score += 3;
+        if (food.tags?.includes('omega-3')) score += 3;
+        if (food.tags?.includes('pro-inflammatory')) {
+          recommendations.avoid.push({ ...food, reason: 'Infiammatorio (Sconsigliato)' });
+          return;
+        }
       }
 
       if (score >= 2) {
@@ -189,13 +221,17 @@ export async function DashboardPage() {
 
   function showWeightUpdateModal(user) {
     const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+    modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in';
     modal.innerHTML = `
       <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
         <h3 class="text-xl font-bold mb-4">Aggiorna Peso per ${user.name}</h3>
         <form id="weight-form" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700">Peso Odierno (kg)</label>
+            <label class="block text-sm font-medium text-gray-700">Data Rilevazione</label>
+            <input type="date" name="date" value="${new Date().toISOString().split('T')[0]}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Peso (kg)</label>
             <input type="number" step="0.1" name="weight" value="${user.weight}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
           </div>
           <div class="flex justify-end gap-3 pt-4">
@@ -208,33 +244,114 @@ export async function DashboardPage() {
     document.body.appendChild(modal);
 
     modal.querySelector('#close-weight-modal').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
     modal.querySelector('#weight-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      const newWeight = Number(new FormData(e.target).get('weight'));
-      const today = new Date().toISOString().split('T')[0];
+      const formData = new FormData(e.target);
+      const newWeight = Number(formData.get('weight'));
+      const date = formData.get('date');
       
       const weightHistory = user.weightHistory || [];
-      const stats = calculateUserStats(user);
       
       // Update history
-      const existingEntry = weightHistory.find(h => h.date === today);
+      const existingEntry = weightHistory.find(h => h.date === date);
       if (existingEntry) {
         existingEntry.actual = newWeight;
       } else {
         const lastEst = weightHistory.length > 0 ? weightHistory[weightHistory.length-1].estimated : user.weight;
         const dailyLoss = (user.weight - user.targetWeight) / (user.goalWeeks * 7);
         weightHistory.push({
-          date: today,
+          date: date,
           actual: newWeight,
           estimated: Math.round((lastEst - dailyLoss) * 10) / 10
         });
+        // Sort history by date
+        weightHistory.sort((a, b) => new Date(a.date) - new Date(b.date));
       }
 
-      store.update('users', user.id, { 
-        weight: newWeight,
+      const updateData = { 
         weightHistory: weightHistory
-      });
+      };
 
+      // If updating for today or a newer date, update current weight
+      const latestDate = weightHistory[weightHistory.length - 1].date;
+      if (date >= latestDate) {
+        updateData.weight = newWeight;
+      }
+
+      store.update('users', user.id, updateData);
+
+      modal.remove();
+      allUsers = store.getAll('users');
+      render();
+    });
+  }
+
+  function showManualTargetModal(user) {
+    const stats = calculateUserStats(user);
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in';
+    modal.innerHTML = `
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">Modifica Target Manuale</h3>
+        <p class="text-sm text-gray-500 mb-6">Sovrascrivi i valori calcolati automaticamente dal sistema.</p>
+        <form id="target-form" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+              <label class="block text-sm font-medium text-gray-700">Calorie Target (Kcal)</label>
+              <input type="number" name="manualTargetKcal" value="${user.manualTargetKcal || stats.targetKcal}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Proteine (g)</label>
+              <input type="number" name="manualProtein" value="${user.manualProtein || stats.protein}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Carboidrati (g)</label>
+              <input type="number" name="manualCarbs" value="${user.manualCarbs || stats.carbs}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Grassi (g)</label>
+              <input type="number" name="manualFats" value="${user.manualFats || stats.fats}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+          </div>
+          <div class="flex justify-between items-center pt-4">
+            <button type="button" id="reset-targets" class="text-sm text-red-600 hover:underline font-medium">Ripristina Automatici</button>
+            <div class="flex gap-3">
+              <button type="button" id="close-target-modal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Annulla</button>
+              <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium">Salva</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.querySelector('#close-target-modal').addEventListener('click', () => modal.remove());
+    modal.querySelector('#reset-targets').addEventListener('click', () => {
+      store.update('users', user.id, {
+        manualTargetKcal: null,
+        manualProtein: null,
+        manualCarbs: null,
+        manualFats: null
+      });
+      modal.remove();
+      allUsers = store.getAll('users');
+      render();
+    });
+
+    modal.querySelector('#target-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = {
+        manualTargetKcal: Number(formData.get('manualTargetKcal')),
+        manualProtein: Number(formData.get('manualProtein')),
+        manualCarbs: Number(formData.get('manualCarbs')),
+        manualFats: Number(formData.get('manualFats'))
+      };
+      
+      store.update('users', user.id, data);
       modal.remove();
       allUsers = store.getAll('users');
       render();
@@ -287,18 +404,21 @@ export async function DashboardPage() {
           const recommendations = getDietaryRecommendations(user);
           const progress = Math.min(100, Math.max(0, ((user.weight - user.targetWeight) / (user.weight - user.targetWeight + 5)) * 100));
 
+          const healthTags = (user.healthConditions || []).map(hc => `<span class="px-1.5 py-0.5 bg-red-100 text-red-600 text-[10px] rounded uppercase font-bold">${hc}</span>`).join('');
+          const intoleranceTags = (user.intolerances || []).map(i => `<span class="px-1.5 py-0.5 bg-yellow-100 text-yellow-600 text-[10px] rounded uppercase font-bold">${i}</span>`).join('');
+
           return `
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in">
               <div class="p-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity user-card-header" data-id="${user.id}">
                   <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-lg">
                     ${user.name.split(' ').map(n => n[0]).join('')}
                   </div>
                   <div>
                     <h3 class="font-bold text-gray-900">${user.name}</h3>
                     <div class="flex flex-wrap gap-1 mt-1">
-                      ${user.healthConditions?.map(hc => `<span class="px-1.5 py-0.5 bg-red-100 text-red-600 text-[10px] rounded uppercase font-bold">${hc}</span>`).join('')}
-                      ${user.intolerances?.map(i => `<span class="px-1.5 py-0.5 bg-yellow-100 text-yellow-600 text-[10px] rounded uppercase font-bold">${i}</span>`).join('')}
+                      ${healthTags}
+                      ${intoleranceTags}
                       <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[10px] rounded uppercase font-bold">Sensibilità: ${user.sensitivity || 'media'}</span>
                     </div>
                   </div>
@@ -315,27 +435,27 @@ export async function DashboardPage() {
 
               <div class="p-6 space-y-6">
                 <!-- Chart -->
-                <div class="h-48 w-full bg-gray-50 rounded-xl p-4">
+                <div class="h-48 w-full bg-gray-50 rounded-xl p-4 cursor-pointer weight-chart-container" data-id="${user.id}">
                   <canvas id="chart-${user.id}"></canvas>
                 </div>
 
                 <!-- Primary Stats -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div class="p-3 bg-blue-50 rounded-xl text-center">
+                  <div class="p-3 bg-blue-50 rounded-xl text-center cursor-pointer hover:bg-blue-100 transition-colors open-targets" data-id="${user.id}">
                     <p class="text-[10px] text-blue-500 uppercase font-bold mb-1">Target Kcal</p>
-                    <p class="text-xl font-black text-blue-700">${stats.targetKcal}</p>
+                    <p class="text-xl font-black text-blue-700">${user.manualTargetKcal || stats.targetKcal}</p>
                   </div>
-                  <div class="p-3 bg-green-50 rounded-xl text-center">
+                  <div class="p-3 bg-green-50 rounded-xl text-center cursor-pointer hover:bg-green-100 transition-colors open-targets" data-id="${user.id}">
                     <p class="text-[10px] text-green-500 uppercase font-bold mb-1">Proteine</p>
-                    <p class="text-xl font-black text-green-700">${stats.protein}g</p>
+                    <p class="text-xl font-black text-green-700">${user.manualProtein || stats.protein}g</p>
                   </div>
-                  <div class="p-3 bg-yellow-50 rounded-xl text-center">
-                    <p class="text-[10px] text-yellow-500 uppercase font-bold mb-1">Carboidrati</p>
-                    <p class="text-xl font-black text-yellow-700">${stats.carbs}g</p>
+                  <div class="p-3 bg-yellow-50 rounded-xl text-center cursor-pointer hover:bg-yellow-100 transition-colors open-targets" data-id="${user.id}">
+                    <p class="text-[10px] text-yellow-500 uppercase font-bold mb-1">Carbo</p>
+                    <p class="text-xl font-black text-yellow-700">${user.manualCarbs || stats.carbs}g</p>
                   </div>
-                  <div class="p-3 bg-red-50 rounded-xl text-center">
+                  <div class="p-3 bg-red-50 rounded-xl text-center cursor-pointer hover:bg-red-100 transition-colors open-targets" data-id="${user.id}">
                     <p class="text-[10px] text-red-500 uppercase font-bold mb-1">Grassi</p>
-                    <p class="text-xl font-black text-red-700">${stats.fats}g</p>
+                    <p class="text-xl font-black text-red-700">${user.manualFats || stats.fats}g</p>
                   </div>
                 </div>
 
@@ -445,6 +565,37 @@ export async function DashboardPage() {
         if (user) showWeightUpdateModal(user);
       });
     });
+
+    // Event Listeners for Dynamic Actions
+    container.addEventListener('click', async (e) => {
+      const targetBtn = e.target.closest('.open-targets');
+      const weightChart = e.target.closest('.weight-chart-container');
+      const userHeader = e.target.closest('.user-card-header');
+      
+      if (targetBtn) {
+        const id = targetBtn.getAttribute('data-id');
+        const user = allUsers.find(u => u.id === id);
+        if (user) showManualTargetModal(user);
+      }
+      
+      if (weightChart) {
+        const id = weightChart.getAttribute('data-id');
+        const user = allUsers.find(u => u.id === id);
+        if (user) showWeightUpdateModal(user);
+      }
+
+      if (userHeader) {
+        const id = userHeader.getAttribute('data-id');
+        const user = allUsers.find(u => u.id === id);
+        if (user) {
+            const { showUserModal } = await import('./users.js');
+            showUserModal(user, () => {
+              allUsers = store.getAll('users');
+              render();
+            });
+          }
+        }
+      });
 
     if (window.lucide) window.lucide.createIcons();
     if (window.updatePageTitle) window.updatePageTitle();

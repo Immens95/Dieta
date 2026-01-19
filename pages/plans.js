@@ -52,22 +52,36 @@ export async function PlansPage() {
     
     let tdee = bmr * (activityMultipliers[user.activityLevel] || 1.2);
     
-    // Adjustment for goal
-    if (user.weight > user.targetWeight) tdee -= 500; // Deficit
-    else if (user.weight < user.targetWeight) tdee += 300; // Surplus
+    // Target calories based on goal (consistent with dashboard.js logic if possible)
+    const kgToLose = user.weight - user.targetWeight;
+    if (Math.abs(kgToLose) > 0.1) {
+      const totalDeficitNeeded = kgToLose * 7700;
+      const dailyDeficit = totalDeficitNeeded / ((user.goalWeeks || 12) * 7);
+      return Math.round(tdee - dailyDeficit);
+    }
     
     return Math.round(tdee);
   }
 
   function getSuitableRecipes(user) {
+    const conditions = (user.healthConditions || []).map(c => c.toLowerCase());
+    const intolerances = (user.intolerances || []).map(i => i.toLowerCase());
+
     return recipes.filter(r => {
-      // Check intolerances (match data values: lactose, gluten)
-      if (user.intolerances?.includes('gluten') && !r.tags?.includes('gluten-free')) return false;
-      if (user.intolerances?.includes('lactose') && !r.tags?.includes('lactose-free')) return false;
+      // Check intolerances
+      if ((intolerances.includes('gluten') || intolerances.includes('glutine')) && !r.tags?.includes('gluten-free')) return false;
+      if ((intolerances.includes('lactose') || intolerances.includes('lattosio')) && !r.tags?.includes('lactose-free')) return false;
       
-      // Health conditions (match data values: reflux, ibs)
-      if (user.healthConditions?.includes('reflux') && !r.tags?.includes('low-acid')) return false;
-      if (user.healthConditions?.includes('ibs') && !r.tags?.includes('low-fodmap') && !r.tags?.includes('gluten-free')) return false;
+      // Health conditions
+      if ((conditions.includes('reflux') || conditions.includes('reflusso')) && !r.tags?.includes('low-acid')) return false;
+      if (conditions.includes('ibs') && !r.tags?.includes('low-fodmap') && !r.tags?.includes('gluten-free')) return false;
+      
+      // New pathologies: focus on anti-inflammatory and omega-3 for arthritis and MS
+      if (conditions.includes('artrite') || conditions.includes('sclerosi multipla')) {
+        // We don't necessarily filter out recipes, but we could prioritize them.
+        // For now, let's just ensure we don't include pro-inflammatory ones if they exist.
+        if (r.tags?.includes('pro-inflammatory')) return false;
+      }
       
       return true;
     });
@@ -85,6 +99,35 @@ export async function PlansPage() {
       }
       return acc;
     }, { calories: 0, protein: 0, carbs: 0, fats: 0 });
+  }
+
+  function getScaledRecipe(recipe, targetCals) {
+    const currentTotals = recipe.totals || calculateTotals(recipe.ingredients);
+    if (currentTotals.calories === 0) return recipe;
+    
+    const scaleFactor = targetCals / currentTotals.calories;
+    
+    const scaledIngredients = recipe.ingredients.map(ing => ({
+      ...ing,
+      amount: Math.round(ing.amount * scaleFactor)
+    }));
+    
+    return {
+      ...recipe,
+      ingredients: scaledIngredients,
+      totals: calculateTotals(scaledIngredients)
+    };
+  }
+
+  function getMealTargetCals(user, mealKey) {
+    const dailyTarget = calculateUserDailyCals(user);
+    const mealTargets = {
+      breakfast: 0.20,
+      lunch: 0.35,
+      dinner: 0.30,
+      snacks: 0.15
+    };
+    return dailyTarget * (mealTargets[mealKey] || 0.25);
   }
 
   function render() {
@@ -173,8 +216,12 @@ export async function PlansPage() {
       item.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = item.getAttribute('data-id');
+        const mealKey = item.getAttribute('data-meal');
         const recipe = recipes.find(r => r.id === id);
-        if (recipe) showRecipeDetailModal(recipe, foods);
+        if (recipe) {
+          const targetCals = mealKey ? getMealTargetCals(user, mealKey) : null;
+          showRecipeDetailModal(recipe, foods, targetCals);
+        }
       });
     });
 
@@ -251,11 +298,14 @@ export async function PlansPage() {
                 </div>
                 <div class="space-y-3">
                   ${mealRecipes.length ? mealRecipes.map(r => {
-                    const totals = r.totals || calculateTotals(r.ingredients);
+                    const targetCals = getMealTargetCals(user, mealKey);
+                    const scaledR = getScaledRecipe(r, targetCals);
+                    const totals = scaledR.totals;
                     return `
-                      <div class="group bg-gray-50 hover:bg-blue-50 p-3 rounded-xl transition-all cursor-pointer recipe-item relative border border-transparent hover:border-blue-100" data-id="${r.id}">
+                      <div class="group bg-gray-50 hover:bg-blue-50 p-3 rounded-xl transition-all cursor-pointer recipe-item relative border border-transparent hover:border-blue-100" data-id="${r.id}" data-meal="${mealKey}">
                         <div class="font-bold text-sm text-gray-800 pr-6">${r.name}</div>
                         <div class="text-[10px] font-medium text-gray-500 mt-1">${Math.round(totals.calories)} Kcal • ${r.prepTime || '20 min'}</div>
+                        <div class="text-[9px] text-blue-600 mt-0.5">Adattata al tuo profilo</div>
                         <button class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 remove-from-meal transition-opacity" 
                           data-day="${dayKey}" data-meal="${mealKey}" data-id="${r.id}">
                           <i data-lucide="x" class="w-4 h-4"></i>
@@ -314,11 +364,13 @@ export async function PlansPage() {
                       </div>
                       <div class="space-y-1.5">
                         ${mealRecipes.length ? mealRecipes.map(r => {
-                          const totals = r.totals || calculateTotals(r.ingredients);
+                          const targetCals = getMealTargetCals(user, mealKey);
+                          const scaledR = getScaledRecipe(r, targetCals);
+                          const totals = scaledR.totals;
                           return `
-                            <div class="group p-2 bg-blue-50/50 hover:bg-blue-100/50 rounded-lg text-[11px] cursor-pointer recipe-item relative transition-colors" data-id="${r.id}">
+                            <div class="group p-2 bg-blue-50/50 hover:bg-blue-100/50 rounded-lg text-[11px] cursor-pointer recipe-item relative transition-colors" data-id="${r.id}" data-meal="${mealKey}">
                               <div class="font-bold text-blue-900 pr-4 leading-tight">${r.name}</div>
-                              <div class="text-[9px] text-blue-600 mt-0.5">${Math.round(totals.calories)} Kcal</div>
+                              <div class="text-[9px] text-blue-600 mt-0.5">${Math.round(totals.calories)} Kcal (Adattata)</div>
                               <button class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 remove-from-meal transition-opacity" 
                                 data-day="${dayKey}" data-meal="${mealKey}" data-id="${r.id}">
                                 <i data-lucide="x" class="w-3 h-3"></i>
@@ -398,7 +450,6 @@ export async function PlansPage() {
     if (window.lucide) window.lucide.createIcons();
 
     modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
-    
     modal.addEventListener('click', (e) => {
       if (e.target === modal) modal.remove();
     });
@@ -507,11 +558,36 @@ export async function PlansPage() {
     };
 
     const target = dailyTarget * mealTargets[meal];
+    
+    // Map meal keys to category names
+    const categoryMap = {
+      breakfast: 'Colazione',
+      lunch: 'Pranzo',
+      dinner: 'Cena',
+      snacks: 'Merenda'
+    };
+    const targetCategory = categoryMap[meal];
+
     let candidates = suitableRecipes.filter(r => {
+      // Must match category if categories are defined
+      if (r.mealCategories && r.mealCategories.length > 0) {
+        if (!r.mealCategories.includes(targetCategory)) return false;
+      }
+      
       const totals = r.totals || calculateTotals(r.ingredients);
       const cals = totals.calories;
-      return cals >= target * 0.7 && cals <= target * 1.3;
+      // Allow recipes within a reasonable calorie range of the target
+      return cals >= target * 0.5 && cals <= target * 1.5;
     });
+
+    if (candidates.length === 0) {
+      // Fallback to suitable recipes that might not match the category exactly but fit calorie-wise
+      candidates = suitableRecipes.filter(r => {
+        const totals = r.totals || calculateTotals(r.ingredients);
+        const cals = totals.calories;
+        return cals >= target * 0.7 && cals <= target * 1.3;
+      });
+    }
 
     if (candidates.length === 0) candidates = suitableRecipes;
     const picked = candidates[Math.floor(Math.random() * candidates.length)];

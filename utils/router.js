@@ -5,14 +5,25 @@ export class Router {
     this.currentPath = null;
     
     // Determine base path (e.g., "/Dieta" if hosted at localhost/Dieta/)
-    this.basePath = window.location.pathname.replace(/\/$/, '') || '';
-    // If the path ends with a known route, strip it to get the actual base
+    const currentPath = window.location.pathname;
     const knownRoutes = Object.keys(routes).filter(r => r !== '/');
+    
+    let matchedRoute = null;
     for (const route of knownRoutes) {
-      if (this.basePath.endsWith(route)) {
-        this.basePath = this.basePath.slice(0, -route.length);
+      if (currentPath.endsWith(route) || currentPath.endsWith(route + '/')) {
+        matchedRoute = route;
         break;
       }
+    }
+    
+    if (matchedRoute) {
+      this.basePath = currentPath.split(matchedRoute)[0];
+    } else {
+      this.basePath = currentPath.replace(/\/$/, '') || '';
+    }
+    
+    if (this.basePath.length > 1 && this.basePath.endsWith('/')) {
+      this.basePath = this.basePath.slice(0, -1);
     }
 
     window.addEventListener('popstate', () => this.handleRoute());
