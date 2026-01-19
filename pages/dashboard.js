@@ -35,11 +35,12 @@ export async function DashboardPage() {
     let fatsPct = 0.3;
 
     // Adjust macros based on health conditions
-    if (user.healthConditions?.includes('reflux')) {
+    const conditions = (user.healthConditions || []).map(c => c.toLowerCase());
+    if (conditions.includes('reflux') || conditions.includes('reflusso')) {
       fatsPct = 0.2; // Lower fats for reflux
       carbsPct = 0.5;
     }
-    if (user.healthConditions?.includes('endometriosis')) {
+    if (conditions.includes('endometriosis') || conditions.includes('endometriosi')) {
       proteinPct = 0.35; // Higher protein/anti-inflammatory focus
       fatsPct = 0.3;
       carbsPct = 0.35;
@@ -73,8 +74,9 @@ export async function DashboardPage() {
 
       // Intolerances (Hard filters)
       const isIntolerant = user.intolerances?.some(i => {
-        if (i === 'lactose' && !food.tags?.includes('lactose-free')) return true;
-        if (i === 'gluten' && !food.tags?.includes('gluten-free')) return true;
+        const intolerance = i.toLowerCase();
+        if ((intolerance === 'lactose' || intolerance === 'lattosio') && !food.tags?.includes('lactose-free')) return true;
+        if ((intolerance === 'gluten' || intolerance === 'glutine') && !food.tags?.includes('gluten-free')) return true;
         return false;
       });
 
@@ -84,7 +86,10 @@ export async function DashboardPage() {
       }
 
       // Health Conditions
-      if (user.healthConditions?.includes('reflux')) {
+      const hasReflux = conditions.includes('reflux') || conditions.includes('reflusso');
+      const hasIBS = conditions.includes('ibs');
+
+      if (hasReflux) {
         if (food.tags?.includes('acidic')) {
           recommendations.avoid.push({ ...food, reason: 'Acido (Sconsigliato per Reflusso)' });
           return;
@@ -92,7 +97,7 @@ export async function DashboardPage() {
         if (food.tags?.includes('low-acid')) score += 2;
       }
 
-      if (user.healthConditions?.includes('ibs')) {
+      if (hasIBS) {
         if (food.tags?.includes('ibs-friendly')) score += 2;
       }
 

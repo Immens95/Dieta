@@ -1,4 +1,5 @@
 import { store } from '../utils/store.js';
+import { foodImages } from '../utils/imageGallery.js';
 
 export async function FoodsPage() {
   await store.ensureInitialized();
@@ -46,7 +47,9 @@ export async function FoodsPage() {
               <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer food-row" data-id="${food.id}">
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
-                    <img src="${food.image || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-lg object-cover">
+                    <img src="${food.image || 'https://via.placeholder.com/40'}" 
+                      onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${encodeURIComponent(food.name)}';" 
+                      class="w-10 h-10 rounded-lg object-cover">
                     <div>
                       <div class="font-medium text-gray-900">${food.name}</div>
                       <div class="text-xs text-gray-500">Unità: ${food.unit}</div>
@@ -145,43 +148,69 @@ export async function FoodsPage() {
 
   function showFoodModal(food = null) {
     const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+    modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+    let selectedImageUrl = food?.image || '';
+
     modal.innerHTML = `
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
         <h3 class="text-xl font-bold">${food ? 'Modifica Alimento' : 'Aggiungi Alimento'}</h3>
         <form id="food-form" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Nome</label>
-            <input type="text" name="name" value="${food?.name || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Nome</label>
+                <input type="text" name="name" value="${food?.name || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Calorie</label>
+                  <input type="number" name="calories" value="${food?.calories || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Proteine</label>
+                  <input type="number" step="0.1" name="protein" value="${food?.protein || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Carboidrati</label>
+                  <input type="number" step="0.1" name="carbs" value="${food?.carbs || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Grassi</label>
+                  <input type="number" step="0.1" name="fats" value="${food?.fats || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Unità</label>
+                <select name="unit" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                  <option value="100g" ${food?.unit === '100g' ? 'selected' : ''}>100g</option>
+                  <option value="100ml" ${food?.unit === '100ml' ? 'selected' : ''}>100ml</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Immagine (URL o scegli sotto)</label>
+                <input type="text" id="image-url-input" name="image" value="${selectedImageUrl}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+              </div>
+            </div>
+            
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">Galleria Immagini</label>
+              <div class="grid grid-cols-3 gap-2 overflow-y-auto max-h-[300px] border border-gray-100 p-2 rounded-lg">
+                ${foodImages.map(img => `
+                  <img src="${img.url}" alt="${img.name}" 
+                    class="w-full h-16 object-cover rounded-md cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all image-option ${selectedImageUrl === img.url ? 'ring-2 ring-blue-600' : ''}" 
+                    data-url="${img.url}">
+                `).join('')}
+              </div>
+              <div class="mt-2 p-2 border border-blue-100 bg-blue-50 rounded-lg text-center">
+                <p class="text-xs text-blue-600 font-medium mb-1">Anteprima</p>
+                <img id="modal-image-preview" src="${selectedImageUrl || 'https://via.placeholder.com/150'}" class="h-32 w-full object-cover rounded-lg mx-auto border border-white shadow-sm">
+              </div>
+            </div>
           </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Calorie (per 100g/ml)</label>
-              <input type="number" name="calories" value="${food?.calories || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Proteine (g)</label>
-              <input type="number" step="0.1" name="protein" value="${food?.protein || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Carboidrati (g)</label>
-              <input type="number" step="0.1" name="carbs" value="${food?.carbs || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Grassi (g)</label>
-              <input type="number" step="0.1" name="fats" value="${food?.fats || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Unità</label>
-            <select name="unit" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-              <option value="100g" ${food?.unit === '100g' ? 'selected' : ''}>100g</option>
-              <option value="100ml" ${food?.unit === '100ml' ? 'selected' : ''}>100ml</option>
-            </select>
-          </div>
-          <div class="flex justify-end gap-3 pt-4">
+
+          <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
             <button type="button" id="close-modal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">Annulla</button>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition-colors">Salva</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition-colors shadow-sm">Salva Alimento</button>
           </div>
         </form>
       </div>
@@ -189,29 +218,40 @@ export async function FoodsPage() {
 
     document.body.appendChild(modal);
 
+    const previewImg = modal.querySelector('#modal-image-preview');
+    const urlInput = modal.querySelector('#image-url-input');
+
+    modal.querySelectorAll('.image-option').forEach(img => {
+      img.addEventListener('click', () => {
+        modal.querySelectorAll('.image-option').forEach(i => i.classList.remove('ring-2', 'ring-blue-600'));
+        img.classList.add('ring-2', 'ring-blue-600');
+        selectedImageUrl = img.getAttribute('data-url');
+        urlInput.value = selectedImageUrl;
+        previewImg.src = selectedImageUrl;
+      });
+    });
+
+    urlInput.addEventListener('input', (e) => {
+      selectedImageUrl = e.target.value;
+      previewImg.src = selectedImageUrl || 'https://via.placeholder.com/150';
+    });
+
     modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
     modal.querySelector('#food-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData.entries());
       
-      // Convert numbers
       data.calories = Number(data.calories);
       data.protein = Number(data.protein);
       data.carbs = Number(data.carbs);
       data.fats = Number(data.fats);
-
-      // Auto-fetch image if name changed or new
-      if (!food || food.name !== data.name) {
-        data.image = `https://loremflickr.com/300/300/food,${encodeURIComponent(data.name)}`;
-      } else {
-        data.image = food.image;
-      }
+      data.image = selectedImageUrl;
 
       if (food) {
-        store.update('foods', food.id, data);
+        await store.update('foods', food.id, data);
       } else {
-        store.add('foods', data);
+        await store.add('foods', data);
       }
 
       modal.remove();

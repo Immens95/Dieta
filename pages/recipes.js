@@ -1,4 +1,5 @@
 import { store } from '../utils/store.js';
+import { recipeImages } from '../utils/imageGallery.js';
 
 export async function RecipesPage() {
   await store.ensureInitialized();
@@ -38,7 +39,9 @@ export async function RecipesPage() {
           return `
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
               <div class="h-48 bg-gray-200 relative">
-                <img src="https://loremflickr.com/400/300/food,${encodeURIComponent(recipe.name)}" class="w-full h-full object-cover">
+                <img src="${recipe.image || 'https://via.placeholder.com/400x300?text=' + encodeURIComponent(recipe.name)}" 
+                  onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=${encodeURIComponent(recipe.name)}';" 
+                  class="w-full h-full object-cover">
                 <div class="absolute top-2 right-2 flex gap-2">
                   <button class="p-2 bg-white/90 rounded-full text-gray-600 hover:text-blue-600 edit-recipe" data-id="${recipe.id}">
                     <i data-lucide="edit-2" class="w-4 h-4"></i>
@@ -118,56 +121,102 @@ export async function RecipesPage() {
     modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
     
     let currentIngredients = recipe ? [...recipe.ingredients] : [];
+    let selectedImageUrl = recipe?.image || '';
 
     function renderModalContent() {
       modal.innerHTML = `
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
           <h3 class="text-xl font-bold mb-4">${recipe ? 'Modifica Ricetta' : 'Aggiungi Ricetta'}</h3>
           <form id="recipe-form" class="space-y-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Nome Ricetta</label>
-              <input type="text" name="name" value="${recipe?.name || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Nome Ricetta</label>
+                  <input type="text" name="name" value="${recipe?.name || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
 
-            <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="block text-sm font-medium text-gray-700">Ingredienti</label>
-                <button type="button" id="add-ing-row" class="text-blue-600 text-xs font-bold hover:underline">+ Aggiungi</button>
-              </div>
-              <div id="ingredients-list" class="space-y-2">
-                ${currentIngredients.map((ing, idx) => `
-                  <div class="flex gap-2 items-center">
-                    <select class="flex-1 border border-gray-300 rounded-lg px-2 py-1 text-sm ing-food" data-idx="${idx}">
-                      ${foods.map(f => `<option value="${f.id}" ${f.id === ing.foodId ? 'selected' : ''}>${f.name}</option>`).join('')}
-                    </select>
-                    <input type="number" value="${ing.amount}" class="w-20 border border-gray-300 rounded-lg px-2 py-1 text-sm ing-amount" data-idx="${idx}" placeholder="g">
-                    <button type="button" class="text-red-500 remove-ing" data-idx="${idx}"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <div>
+                  <div class="flex justify-between items-center mb-2">
+                    <label class="block text-sm font-medium text-gray-700">Ingredienti</label>
+                    <button type="button" id="add-ing-row" class="text-blue-600 text-xs font-bold hover:underline">+ Aggiungi</button>
                   </div>
-                `).join('')}
+                  <div id="ingredients-list" class="space-y-2 max-h-[200px] overflow-y-auto p-1">
+                    ${currentIngredients.map((ing, idx) => `
+                      <div class="flex gap-2 items-center">
+                        <select class="flex-1 border border-gray-300 rounded-lg px-2 py-1 text-sm ing-food" data-idx="${idx}">
+                          ${foods.map(f => `<option value="${f.id}" ${f.id === ing.foodId ? 'selected' : ''}>${f.name}</option>`).join('')}
+                        </select>
+                        <input type="number" value="${ing.amount}" class="w-20 border border-gray-300 rounded-lg px-2 py-1 text-sm ing-amount" data-idx="${idx}" placeholder="g">
+                        <button type="button" class="text-red-500 remove-ing" data-idx="${idx}"><i data-lucide="x" class="w-4 h-4"></i></button>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Istruzioni</label>
+                  <textarea name="instructions" rows="4" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">${recipe?.instructions || ''}</textarea>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Immagine (URL o scegli sotto)</label>
+                  <input type="text" id="image-url-input" name="image" value="${selectedImageUrl}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-700">Galleria Ricette</label>
+                  <div class="grid grid-cols-2 gap-2 overflow-y-auto max-h-[200px] border border-gray-100 p-2 rounded-lg">
+                    ${recipeImages.map(img => `
+                      <img src="${img.url}" alt="${img.name}" 
+                        class="w-full h-20 object-cover rounded-md cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all image-option ${selectedImageUrl === img.url ? 'ring-2 ring-blue-600' : ''}" 
+                        data-url="${img.url}">
+                    `).join('')}
+                  </div>
+                </div>
+
+                <div class="p-2 border border-blue-100 bg-blue-50 rounded-lg text-center">
+                  <p class="text-xs text-blue-600 font-medium mb-1">Anteprima Ricetta</p>
+                  <img id="modal-image-preview" src="${selectedImageUrl || 'https://via.placeholder.com/150'}" class="h-40 w-full object-cover rounded-lg mx-auto border border-white shadow-sm">
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <div class="text-xs font-bold text-gray-400 uppercase mb-2">Totali Nutrizionali (Stimati)</div>
+                  <div id="recipe-totals" class="grid grid-cols-4 gap-4">
+                    <!-- Calculated dynamically -->
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Istruzioni</label>
-              <textarea name="instructions" rows="4" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">${recipe?.instructions || ''}</textarea>
-            </div>
-
-            <div class="bg-gray-50 p-4 rounded-lg">
-              <div class="text-xs font-bold text-gray-400 uppercase mb-2">Totali Nutrizionali (Stimati)</div>
-              <div id="recipe-totals" class="grid grid-cols-4 gap-4">
-                <!-- Calculated dynamically -->
-              </div>
-            </div>
-
-            <div class="flex justify-end gap-3 pt-4">
+            <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
               <button type="button" id="close-modal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">Annulla</button>
-              <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition-colors">Salva Ricetta</button>
+              <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition-colors shadow-sm">Salva Ricetta</button>
             </div>
           </form>
         </div>
       `;
 
       updateTotals();
+
+      const previewImg = modal.querySelector('#modal-image-preview');
+      const urlInput = modal.querySelector('#image-url-input');
+
+      modal.querySelectorAll('.image-option').forEach(img => {
+        img.addEventListener('click', () => {
+          modal.querySelectorAll('.image-option').forEach(i => i.classList.remove('ring-2', 'ring-blue-600'));
+          img.classList.add('ring-2', 'ring-blue-600');
+          selectedImageUrl = img.getAttribute('data-url');
+          urlInput.value = selectedImageUrl;
+          previewImg.src = selectedImageUrl;
+        });
+      });
+
+      urlInput.addEventListener('input', (e) => {
+        selectedImageUrl = e.target.value;
+        previewImg.src = selectedImageUrl || 'https://via.placeholder.com/150';
+      });
 
       modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
       
@@ -200,19 +249,20 @@ export async function RecipesPage() {
         });
       });
 
-      modal.querySelector('#recipe-form').addEventListener('submit', (e) => {
+      modal.querySelector('#recipe-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const data = {
           name: formData.get('name'),
           instructions: formData.get('instructions'),
-          ingredients: currentIngredients
+          ingredients: currentIngredients,
+          image: selectedImageUrl
         };
 
         if (recipe) {
-          store.update('recipes', recipe.id, data);
+          await store.update('recipes', recipe.id, data);
         } else {
-          store.add('recipes', data);
+          await store.add('recipes', data);
         }
 
         modal.remove();

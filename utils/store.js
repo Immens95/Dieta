@@ -18,9 +18,9 @@ export class Store {
       const foodsStored = localStorage.getItem('dieta_foods');
       if (foodsStored) {
         const parsed = JSON.parse(foodsStored);
-        // Check if empty or contains the old sample data
-        if (!Array.isArray(parsed) || parsed.length === 0 || (parsed.length < 10 && parsed.some(f => f.name === 'Petto di Pollo'))) {
-          console.warn('Migration: Clearing corrupted or old food data');
+        // Check if empty or contains the old sample data (less than 300 foods)
+        if (!Array.isArray(parsed) || parsed.length < 300) {
+          console.warn('Migration: Clearing old food data (found ' + (parsed?.length || 0) + ' items)');
           localStorage.removeItem('dieta_foods');
           localStorage.removeItem('dieta_recipes');
           localStorage.removeItem('dieta_plans');
@@ -76,9 +76,23 @@ export class Store {
     });
   }
 
-  save(key) {
+  async save(key) {
     localStorage.setItem(`dieta_${key}`, JSON.stringify(this.data[key]));
     this.notify();
+    
+    // Also save to server if running on htdocs/XAMPP
+    try {
+      await fetch('./save.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: `${key}.json`,
+          content: this.data[key]
+        })
+      });
+    } catch (e) {
+      console.warn('Could not save to server, only local storage updated');
+    }
   }
 
   getAll(key) {
