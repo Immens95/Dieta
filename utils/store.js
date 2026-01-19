@@ -29,7 +29,7 @@ export class Store {
 
       if (recipesStored) {
         const parsedRecipes = JSON.parse(recipesStored);
-        if (!Array.isArray(parsedRecipes) || parsedRecipes.length < 500 || !parsedRecipes[0].prepTime) {
+        if (!Array.isArray(parsedRecipes) || parsedRecipes.length < 500 || !parsedRecipes[0].prepTime || !parsedRecipes[0].mealCategories) {
           shouldClear = true;
         }
       }

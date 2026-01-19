@@ -30,6 +30,55 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Initial route
   window.router.handleRoute();
+
+  // PWA Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => console.log('Service Worker registered'))
+        .catch(err => console.log('Service Worker registration failed', err));
+    });
+  }
+
+  // PWA Install Prompt Handling
+  let deferredPrompt;
+  const installBtn = document.getElementById('install-btn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Update UI to notify the user they can add to home screen
+    if (installBtn) {
+      installBtn.classList.remove('hidden');
+      installBtn.classList.add('flex');
+    }
+  });
+
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      // Show the prompt
+      deferredPrompt.prompt();
+      // Wait for the user to respond to the prompt
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response to the install prompt: ${outcome}`);
+      // We've used the prompt, and can't use it again, throw it away
+      deferredPrompt = null;
+      // Hide the install button
+      installBtn.classList.add('hidden');
+      installBtn.classList.remove('flex');
+    });
+  }
+
+  window.addEventListener('appinstalled', (evt) => {
+    console.log('App was installed');
+    if (installBtn) {
+      installBtn.classList.add('hidden');
+      installBtn.classList.remove('flex');
+    }
+  });
 });
 
 function updateTitle(normalizedPath) {

@@ -41,6 +41,9 @@
   
   <!-- Custom Styles -->
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82f6">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/192/1037/1037853.png">
 </head>
 <body class="h-full">
   <div id="app" class="flex flex-col h-screen bg-gray-50">
@@ -56,6 +59,10 @@
         </div>
         <h2 id="page-title" class="text-sm font-medium text-gray-500 uppercase tracking-wider hidden sm:block">Dashboard</h2>
         <div class="flex items-center gap-2">
+          <button id="install-btn" class="hidden flex-col items-center justify-center gap-1 px-2 py-1 transition-colors text-blue-600 hover:text-blue-700">
+            <i data-lucide="download-cloud" class="w-5 h-5"></i>
+            <span class="text-[10px] font-medium">Installa</span>
+          </button>
           <a href="/users" data-link class="flex flex-col items-center justify-center gap-1 px-2 py-1 transition-colors text-blue-600 hover:text-blue-700">
             <i data-lucide="users" class="w-5 h-5"></i>
             <span class="text-[10px] font-medium">Utenti</span>

@@ -14,7 +14,10 @@ export const foodImages = [
     { name: 'Legumi', url: 'https://images.unsplash.com/photo-1515543904379-3d757afe72e2?w=400&h=300&fit=crop' },
     { name: 'Frutta Secca', url: 'https://images.unsplash.com/photo-1511066922824-1c78440073b0?w=400&h=300&fit=crop' },
     { name: 'Avocado', url: 'https://images.unsplash.com/photo-1523049673857-d188397b35a7?w=400&h=300&fit=crop' },
-    { name: 'Zucchine', url: 'https://images.unsplash.com/photo-1592489639182-b2f82d972829?w=400&h=300&fit=crop' }
+    { name: 'Zucchine', url: 'https://images.unsplash.com/photo-1592489639182-b2f82d972829?w=400&h=300&fit=crop' },
+    { name: 'Olio EVO', url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&h=300&fit=crop' },
+    { name: 'Uva', url: 'https://images.unsplash.com/photo-1537640538966-79f369b41e8f?w=400&h=300&fit=crop' },
+    { name: 'Cioccolato', url: 'https://images.unsplash.com/photo-1511381939415-e44015466834?w=400&h=300&fit=crop' }
 ];
 
 export const recipeImages = [
@@ -25,5 +28,12 @@ export const recipeImages = [
     { name: 'Risotto ai Funghi', url: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&h=300&fit=crop' },
     { name: 'Zuppa di Legumi', url: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop' },
     { name: 'Bowl Proteica', url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop' },
-    { name: 'Colazione Sana', url: 'https://images.unsplash.com/photo-1494390248081-4e521a5940db?w=400&h=300&fit=crop' }
+    { name: 'Colazione Sana', url: 'https://images.unsplash.com/photo-1494390248081-4e521a5940db?w=400&h=300&fit=crop' },
+    { name: 'Risotto all\'Olio', url: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&h=300&fit=crop' },
+    { name: 'Vellutata di Uva', url: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop' }
 ];
+
+export function getUnsplashUrl(query) {
+    return `https://unsplash.com/s/photos/${encodeURIComponent(query)}?license=free`;
+}
+
