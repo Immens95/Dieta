@@ -10,72 +10,129 @@ export async function FoodsPage() {
 
   function render() {
     container.innerHTML = `
-      <div class="flex justify-between items-center">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 class="text-lg font-bold text-gray-900">Database Alimenti</h2>
-          <p class="text-sm text-gray-500">${foods.length} alimenti disponibili</p>
+          <h2 class="text-xl font-black text-gray-900">Database Alimenti</h2>
+          <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">${foods.length} alimenti registrati</p>
         </div>
-        <div class="flex gap-3">
-          <div class="relative w-64">
+        <div class="flex w-full sm:w-auto gap-2">
+          <div class="relative flex-1 sm:w-64">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
               <i data-lucide="search" class="w-4 h-4"></i>
             </span>
-            <input type="text" id="food-search" placeholder="Cerca alimento..." 
-              class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <input type="text" id="food-search" placeholder="Cerca..." 
+              class="block w-full pl-10 pr-3 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm shadow-sm transition-all">
           </div>
-          <button id="add-food-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            Aggiungi
+          <button id="add-food-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 text-sm font-bold transition-all shadow-md active:scale-95">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+            <span class="hidden sm:inline">Aggiungi</span>
           </button>
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-gray-50 border-b border-gray-100">
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Alimento</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-center">Calorie</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-center">Proteine</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-center">Carboidrati</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-center">Grassi</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-right">Azioni</th>
-            </tr>
-          </thead>
-          <tbody id="food-table-body">
-            ${foods.map(food => `
-              <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer food-row" data-id="${food.id}">
-                <td class="px-6 py-4">
-                  <div class="flex items-center gap-3">
-                    <img src="${food.image || 'https://via.placeholder.com/40'}" 
-                      onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
-                      class="w-10 h-10 rounded-lg object-cover">
-                    <div>
-                      <div class="font-medium text-gray-900">${food.name}</div>
-                      <div class="text-xs text-gray-500">Unità: ${food.unit}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 text-center font-medium">${food.calories}</td>
-                <td class="px-6 py-4 text-center text-blue-600 font-medium">${food.protein}g</td>
-                <td class="px-6 py-4 text-center text-green-600 font-medium">${food.carbs}g</td>
-                <td class="px-6 py-4 text-center text-red-600 font-medium">${food.fats}g</td>
-                <td class="px-6 py-4 text-right">
-                  <div class="flex justify-end gap-2">
-                    <button class="p-2 text-gray-400 hover:text-blue-600 transition-colors edit-food" data-id="${food.id}">
-                      <i data-lucide="edit-2" class="w-4 h-4"></i>
-                    </button>
-                    <button class="p-2 text-gray-400 hover:text-red-600 transition-colors delete-food" data-id="${food.id}">
-                      <i data-lucide="trash-2" class="w-4 h-4"></i>
-                    </button>
-                  </div>
-                </td>
+      <div class="bg-white sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden -mx-4 sm:mx-0">
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-50/50 border-b border-gray-100">
+                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Alimento</th>
+                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Calorie</th>
+                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Macros (P/C/F)</th>
+                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Azioni</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody id="food-table-body">
+              ${renderTableRows(foods)}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="md:hidden divide-y divide-gray-100" id="food-cards-container">
+          ${renderMobileCards(foods)}
+        </div>
       </div>
     `;
+
+    function renderTableRows(items) {
+      return items.map(food => `
+        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer food-row" data-id="${food.id}">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-4">
+              <img src="${food.image || 'https://via.placeholder.com/40'}" 
+                onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
+                class="w-12 h-12 rounded-xl object-cover shadow-sm">
+              <div>
+                <div class="font-bold text-gray-900">${food.name}</div>
+                <div class="text-[10px] text-gray-500 font-medium uppercase tracking-tighter">Porzione: ${food.unit}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm font-black">${food.calories}</span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-center gap-3">
+              <div class="text-center">
+                <div class="text-xs font-black text-blue-600">${food.protein}g</div>
+                <div class="text-[8px] text-gray-400 uppercase font-bold">Pro</div>
+              </div>
+              <div class="text-center">
+                <div class="text-xs font-black text-green-600">${food.carbs}g</div>
+                <div class="text-[8px] text-gray-400 uppercase font-bold">Carb</div>
+              </div>
+              <div class="text-center">
+                <div class="text-xs font-black text-red-600">${food.fats}g</div>
+                <div class="text-[8px] text-gray-400 uppercase font-bold">Fat</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex justify-end gap-1">
+              <button class="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all edit-food" data-id="${food.id}">
+                <i data-lucide="edit-2" class="w-4 h-4"></i>
+              </button>
+              <button class="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all delete-food" data-id="${food.id}">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderMobileCards(items) {
+      return items.map(food => `
+        <div class="p-4 flex items-center gap-4 active:bg-gray-50 transition-colors food-row" data-id="${food.id}">
+          <img src="${food.image || 'https://via.placeholder.com/40'}" 
+            onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
+            class="w-16 h-16 rounded-2xl object-cover shadow-sm shrink-0">
+          <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-start mb-1">
+              <h3 class="font-black text-gray-900 truncate pr-2">${food.name}</h3>
+              <span class="text-xs font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">${food.calories} kcal</span>
+            </div>
+            <div class="flex items-center gap-4 text-[10px] font-bold uppercase tracking-wider text-gray-500">
+              <span class="text-blue-600">P: ${food.protein}g</span>
+              <span class="text-green-600">C: ${food.carbs}g</span>
+              <span class="text-red-600">F: ${food.fats}g</span>
+            </div>
+            <div class="mt-2 flex justify-between items-center">
+              <span class="text-[10px] text-gray-400 font-medium">Portione: ${food.unit}</span>
+              <div class="flex gap-1">
+                <button class="p-2 text-gray-400 hover:text-blue-600 edit-food" data-id="${food.id}">
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button class="p-2 text-gray-400 hover:text-red-600 delete-food" data-id="${food.id}">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
 
     // Add event listeners
     container.querySelector('#food-search').addEventListener('input', (e) => {
@@ -116,33 +173,11 @@ export async function FoodsPage() {
 
   function updateTable(filteredFoods) {
     const tbody = container.querySelector('#food-table-body');
-    tbody.innerHTML = filteredFoods.map(food => `
-      <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer food-row" data-id="${food.id}">
-        <td class="px-6 py-4">
-          <div class="flex items-center gap-3">
-            <img src="${food.image || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-lg object-cover">
-            <div>
-              <div class="font-medium text-gray-900">${food.name}</div>
-              <div class="text-xs text-gray-500">Unità: ${food.unit}</div>
-            </div>
-          </div>
-        </td>
-        <td class="px-6 py-4 text-center font-medium">${food.calories}</td>
-        <td class="px-6 py-4 text-center text-blue-600 font-medium">${food.protein}g</td>
-        <td class="px-6 py-4 text-center text-green-600 font-medium">${food.carbs}g</td>
-        <td class="px-6 py-4 text-center text-red-600 font-medium">${food.fats}g</td>
-        <td class="px-6 py-4 text-right">
-          <div class="flex justify-end gap-2">
-            <button class="p-2 text-gray-400 hover:text-blue-600 transition-colors edit-food" data-id="${food.id}">
-              <i data-lucide="edit-2" class="w-4 h-4"></i>
-            </button>
-            <button class="p-2 text-gray-400 hover:text-red-600 transition-colors delete-food" data-id="${food.id}">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    `).join('');
+    const cardsContainer = container.querySelector('#food-cards-container');
+    
+    if (tbody) tbody.innerHTML = renderTableRows(filteredFoods);
+    if (cardsContainer) cardsContainer.innerHTML = renderMobileCards(filteredFoods);
+    
     if (window.lucide) window.lucide.createIcons();
   }
 

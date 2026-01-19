@@ -221,22 +221,27 @@ export async function DashboardPage() {
 
   function showWeightUpdateModal(user) {
     const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in';
+    modal.className = 'fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm animate-fade-in';
     modal.innerHTML = `
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
-        <h3 class="text-xl font-bold mb-4">Aggiorna Peso per ${user.name}</h3>
-        <form id="weight-form" class="space-y-4">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 sm:p-8 animate-scale-in">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-black text-gray-900">Aggiorna Peso</h3>
+          <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-black text-xs">
+            ${user.name.split(' ').map(n => n[0]).join('')}
+          </div>
+        </div>
+        <form id="weight-form" class="space-y-5">
           <div>
-            <label class="block text-sm font-medium text-gray-700">Data Rilevazione</label>
-            <input type="date" name="date" value="${new Date().toISOString().split('T')[0]}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Data Rilevazione</label>
+            <input type="date" name="date" value="${new Date().toISOString().split('T')[0]}" required class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none">
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700">Peso (kg)</label>
-            <input type="number" step="0.1" name="weight" value="${user.weight}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Peso (kg)</label>
+            <input type="number" step="0.1" name="weight" value="${user.weight}" required class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none">
           </div>
-          <div class="flex justify-end gap-3 pt-4">
-            <button type="button" id="close-weight-modal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Annulla</button>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium">Salva</button>
+          <div class="flex gap-3 pt-4">
+            <button type="button" id="close-weight-modal" class="flex-1 px-4 py-3 text-gray-500 font-black text-[10px] uppercase tracking-widest hover:bg-gray-50 rounded-xl transition-all">Annulla</button>
+            <button type="submit" class="flex-1 px-4 py-3 bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 rounded-xl transition-all shadow-md active:scale-95">Salva</button>
           </div>
         </form>
       </div>
@@ -292,35 +297,35 @@ export async function DashboardPage() {
   function showManualTargetModal(user) {
     const stats = calculateUserStats(user);
     const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in';
+    modal.className = 'fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm animate-fade-in';
     modal.innerHTML = `
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
-        <h3 class="text-xl font-bold mb-4 text-gray-800">Modifica Target Manuale</h3>
-        <p class="text-sm text-gray-500 mb-6">Sovrascrivi i valori calcolati automaticamente dal sistema.</p>
-        <form id="target-form" class="space-y-4">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 sm:p-8 animate-scale-in">
+        <h3 class="text-xl font-black text-gray-900 mb-2">Target Manuale</h3>
+        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-6">Sovrascrivi i valori calcolati</p>
+        <form id="target-form" class="space-y-5">
           <div class="grid grid-cols-2 gap-4">
             <div class="col-span-2">
-              <label class="block text-sm font-medium text-gray-700">Calorie Target (Kcal)</label>
-              <input type="number" name="manualTargetKcal" value="${user.manualTargetKcal || stats.targetKcal}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+              <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Calorie Target (Kcal)</label>
+              <input type="number" name="manualTargetKcal" value="${user.manualTargetKcal || stats.targetKcal}" class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Proteine (g)</label>
-              <input type="number" name="manualProtein" value="${user.manualProtein || stats.protein}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+              <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Proteine (g)</label>
+              <input type="number" name="manualProtein" value="${user.manualProtein || stats.protein}" class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Carboidrati (g)</label>
-              <input type="number" name="manualCarbs" value="${user.manualCarbs || stats.carbs}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+              <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Carbo (g)</label>
+              <input type="number" name="manualCarbs" value="${user.manualCarbs || stats.carbs}" class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Grassi (g)</label>
-              <input type="number" name="manualFats" value="${user.manualFats || stats.fats}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+              <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Grassi (g)</label>
+              <input type="number" name="manualFats" value="${user.manualFats || stats.fats}" class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none">
             </div>
           </div>
-          <div class="flex justify-between items-center pt-4">
-            <button type="button" id="reset-targets" class="text-sm text-red-600 hover:underline font-medium">Ripristina Automatici</button>
-            <div class="flex gap-3">
-              <button type="button" id="close-target-modal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg">Annulla</button>
-              <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium">Salva</button>
+          <div class="flex flex-col gap-3 pt-4">
+            <button type="submit" class="w-full px-4 py-3 bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 rounded-xl transition-all shadow-md active:scale-95">Salva Modifiche</button>
+            <div class="flex gap-2">
+              <button type="button" id="close-target-modal" class="flex-1 px-4 py-2 text-gray-500 font-black text-[10px] uppercase tracking-widest hover:bg-gray-50 rounded-lg transition-all">Annulla</button>
+              <button type="button" id="reset-targets" class="flex-1 px-4 py-2 text-red-500 font-black text-[10px] uppercase tracking-widest hover:bg-red-50 rounded-lg transition-all">Ripristina</button>
             </div>
           </div>
         </form>

@@ -136,40 +136,47 @@ export async function PlansPage() {
     const dailyCals = calculateUserDailyCals(user);
 
     container.innerHTML = `
-      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-        <div class="space-y-1">
-          <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Piani Alimentari</h2>
-          <div class="flex items-center gap-3">
-            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Gestione per:</label>
-            <select id="user-selector" class="bg-blue-50 text-blue-700 text-sm font-bold py-1 px-3 rounded-full border-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-              ${users.map(u => `<option value="${u.id}" ${u.id === selectedUserId ? 'selected' : ''}>${u.name}</option>`).join('')}
-            </select>
+      <div class="space-y-4">
+        <!-- Compact Header -->
+        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-black text-gray-900">Piani Alimentari</h2>
+              <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Target: ${dailyCals} kcal/giorno</p>
+            </div>
+            <div class="flex gap-2">
+              <button id="generate-plan-btn" class="bg-blue-600 hover:bg-blue-700 text-white p-2.5 rounded-xl flex items-center justify-center transition-all shadow-md active:scale-95" title="Genera Piano">
+                <i data-lucide="wand-2" class="w-5 h-5"></i>
+              </button>
+              <button id="export-pdf-btn" class="bg-gray-800 hover:bg-gray-900 text-white p-2.5 rounded-xl flex items-center justify-center transition-all shadow-md active:scale-95" title="Esporta PDF">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <!-- User Selector -->
+            <div class="relative flex-1">
+              <select id="user-selector" class="w-full pl-9 pr-3 py-2.5 bg-blue-50/50 text-blue-700 text-xs font-black rounded-xl border border-blue-100 focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer">
+                ${users.map(u => `<option value="${u.id}" ${u.id === selectedUserId ? 'selected' : ''}>Profilo: ${u.name}</option>`).join('')}
+              </select>
+              <i data-lucide="user" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-600 pointer-events-none"></i>
+            </div>
+
+            <!-- View Toggles -->
+            <div class="flex bg-gray-100 p-1 rounded-xl w-full sm:w-auto">
+              <button class="view-toggle flex-1 sm:flex-none px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${viewMode === 'day' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-view="day">Giorno</button>
+              <button class="view-toggle flex-1 sm:flex-none px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${viewMode === 'week' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-view="week">Settimana</button>
+              <button class="view-toggle flex-1 sm:flex-none px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${viewMode === 'month' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-view="month">Mese</button>
+            </div>
           </div>
         </div>
 
-        <div class="flex flex-wrap gap-3">
-          <div class="flex bg-gray-100 p-1 rounded-xl">
-            <button class="view-toggle px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'day' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-view="day">Giorno</button>
-            <button class="view-toggle px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'week' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-view="week">Settimana</button>
-            <button class="view-toggle px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'month' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}" data-view="month">Mese</button>
-          </div>
-          
-          <button id="generate-plan-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition-all shadow-sm shadow-blue-200">
-            <i data-lucide="wand-2" class="w-4 h-4"></i>
-            Genera Piano
-          </button>
-          
-          <button id="export-pdf-btn" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition-all shadow-sm">
-            <i data-lucide="file-text" class="w-4 h-4"></i>
-            Esporta
-          </button>
+        <div class="grid grid-cols-1 gap-4">
+          ${viewMode === 'day' ? renderDayView(plan, dailyCals, user) : 
+            viewMode === 'week' ? renderWeekView(plan, dailyCals, user) : 
+            renderMonthView(plan, dailyCals, user)}
         </div>
-      </div>
-
-      <div class="grid grid-cols-1 gap-6">
-        ${viewMode === 'day' ? renderDayView(plan, dailyCals, user) : 
-          viewMode === 'week' ? renderWeekView(plan, dailyCals, user) : 
-          renderMonthView(plan, dailyCals, user)}
       </div>
     `;
 
@@ -182,6 +189,13 @@ export async function PlansPage() {
     container.querySelectorAll('.view-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
         viewMode = btn.getAttribute('data-view');
+        render();
+      });
+    });
+
+    container.querySelectorAll('.day-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedDayIndex = parseInt(btn.getAttribute('data-idx'));
         render();
       });
     });
@@ -258,22 +272,36 @@ export async function PlansPage() {
     const dayKey = dayKeys[selectedDayIndex];
     return `
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="flex items-center justify-between p-6 border-b border-gray-50 bg-gray-50/30">
-          <div class="flex items-center gap-4">
-            <button id="prev-day" class="p-2 hover:bg-gray-100 rounded-full transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
-            <h3 class="text-xl font-bold text-gray-800">${daysOfWeek[selectedDayIndex]}</h3>
-            <button id="next-day" class="p-2 hover:bg-gray-100 rounded-full transition-colors"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
-            <button class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors auto-fill-day" data-day="${dayKey}">
-              <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
-              Auto-fill Giorno
-            </button>
-          </div>
-          <div class="text-right">
-            <div class="text-[10px] font-bold text-gray-400 uppercase">Target Giornaliero</div>
-            <div class="text-lg font-black text-blue-600">${dailyCals} Kcal</div>
+        <!-- Horizontal Day Selector -->
+        <div class="bg-gray-50/50 border-b border-gray-100">
+          <div class="flex overflow-x-auto scrollbar-hide p-2 gap-1">
+            ${daysOfWeek.map((day, idx) => `
+              <button class="day-tab shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${selectedDayIndex === idx ? 'bg-blue-600 text-white shadow-md shadow-blue-100' : 'text-gray-500 hover:bg-gray-100'}" 
+                data-idx="${idx}">
+                ${day.substring(0, 3)}
+              </button>
+            `).join('')}
           </div>
         </div>
-        <div class="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 border-b border-gray-50 gap-4">
+          <div class="flex items-center gap-3">
+            <h3 class="text-xl font-black text-gray-900">${daysOfWeek[selectedDayIndex]}</h3>
+            <button class="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-100 transition-all auto-fill-day" data-day="${dayKey}">
+              <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">Auto-fill Giorno</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-3 bg-blue-50/50 px-4 py-2 rounded-2xl border border-blue-100/50">
+            <div class="text-right">
+              <div class="text-[8px] font-black text-blue-400 uppercase tracking-tighter">Target Giornaliero</div>
+              <div class="text-lg font-black text-blue-700 leading-none">${dailyCals} <span class="text-xs">Kcal</span></div>
+            </div>
+            <i data-lucide="target" class="w-5 h-5 text-blue-600"></i>
+          </div>
+        </div>
+
+        <div class="p-4 sm:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
           ${mealKeys.map((mealKey, idx) => {
             const mealRecipes = (plan.days[dayKey]?.[mealKey] || []).map(id => recipes.find(r => r.id === id)).filter(Boolean);
             const mealCals = mealRecipes.reduce((sum, r) => {
@@ -281,40 +309,51 @@ export async function PlansPage() {
               return sum + totals.calories;
             }, 0);
             return `
-              <div class="space-y-4">
+              <div class="space-y-4 bg-gray-50/30 p-4 rounded-2xl border border-gray-50 transition-all hover:bg-white hover:shadow-md hover:border-gray-100">
                 <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <h4 class="font-bold text-gray-900 flex items-center gap-2">
+                  <h4 class="font-black text-gray-900 text-xs uppercase tracking-widest flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                     ${meals[idx]}
                   </h4>
-                  <div class="flex items-center gap-2">
-                    <button class="text-blue-500 hover:text-blue-700 auto-fill-meal" data-day="${dayKey}" data-meal="${mealKey}" title="Auto-fill Pasto">
+                  <div class="flex items-center gap-1">
+                    <button class="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all auto-fill-meal" data-day="${dayKey}" data-meal="${mealKey}" title="Auto-fill Pasto">
                       <i data-lucide="wand-2" class="w-4 h-4"></i>
                     </button>
-                    <button class="text-blue-600 hover:text-blue-800 add-to-meal" data-day="${dayKey}" data-meal="${mealKey}">
+                    <button class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all add-to-meal" data-day="${dayKey}" data-meal="${mealKey}">
                       <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     </button>
                   </div>
                 </div>
-                <div class="space-y-3">
+                <div class="space-y-2">
                   ${mealRecipes.length ? mealRecipes.map(r => {
                     const targetCals = getMealTargetCals(user, mealKey);
                     const scaledR = getScaledRecipe(r, targetCals);
                     const totals = scaledR.totals;
                     return `
-                      <div class="group bg-gray-50 hover:bg-blue-50 p-3 rounded-xl transition-all cursor-pointer recipe-item relative border border-transparent hover:border-blue-100" data-id="${r.id}" data-meal="${mealKey}">
-                        <div class="font-bold text-sm text-gray-800 pr-6">${r.name}</div>
-                        <div class="text-[10px] font-medium text-gray-500 mt-1">${Math.round(totals.calories)} Kcal • ${r.prepTime || '20 min'}</div>
-                        <div class="text-[9px] text-blue-600 mt-0.5">Adattata al tuo profilo</div>
-                        <button class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 remove-from-meal transition-opacity" 
+                      <div class="group bg-white p-3 rounded-xl shadow-sm border border-gray-100 hover:border-blue-200 transition-all cursor-pointer recipe-item relative active:scale-95" data-id="${r.id}" data-meal="${mealKey}">
+                        <div class="font-black text-sm text-gray-800 pr-6 leading-tight">${r.name}</div>
+                        <div class="flex items-center gap-2 mt-2">
+                          <span class="text-[9px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md uppercase tracking-tighter">${Math.round(totals.calories)} Kcal</span>
+                          <span class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">${r.prepTime || '20 min'}</span>
+                        </div>
+                        <button class="absolute top-2 right-2 p-1.5 opacity-100 sm:opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all remove-from-meal" 
                           data-day="${dayKey}" data-meal="${mealKey}" data-id="${r.id}">
-                          <i data-lucide="x" class="w-4 h-4"></i>
+                          <i data-lucide="x" class="w-3.5 h-3.5"></i>
                         </button>
                       </div>
                     `;
-                  }).join('') : '<div class="text-xs text-gray-400 italic py-4 text-center bg-gray-50/50 rounded-xl border border-dashed border-gray-200">Nessun pasto pianificato</div>'}
+                  }).join('') : `
+                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest py-6 text-center border-2 border-dashed border-gray-100 rounded-xl">
+                      Vuoto
+                    </div>
+                  `}
                 </div>
-                ${mealRecipes.length ? `<div class="text-right text-[10px] font-bold text-gray-400 uppercase">Totale: ${Math.round(mealCals)} Kcal</div>` : ''}
+                ${mealRecipes.length ? `
+                  <div class="flex justify-between items-center pt-2">
+                    <span class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Totale Pasto</span>
+                    <span class="text-[10px] font-black text-gray-900">${Math.round(mealCals)} Kcal</span>
+                  </div>
+                ` : ''}
               </div>
             `;
           }).join('')}
@@ -325,7 +364,7 @@ export async function PlansPage() {
 
   function renderWeekView(plan, dailyCals, user) {
     return `
-      <div class="grid grid-cols-1 xl:grid-cols-7 gap-4 overflow-x-auto pb-4">
+      <div class="flex overflow-x-auto snap-x snap-mandatory pb-6 gap-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 xl:grid xl:grid-cols-7 xl:overflow-visible">
         ${dayKeys.map((dayKey, dayIdx) => {
           const dayCals = mealKeys.reduce((sum, mk) => {
             const mealRecipes = (plan.days[dayKey]?.[mk] || []).map(id => recipes.find(r => r.id === id)).filter(Boolean);
@@ -336,48 +375,58 @@ export async function PlansPage() {
           }, 0);
           
           return `
-            <div class="min-w-[220px] bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col hover:shadow-md transition-shadow">
+            <div class="min-w-[85vw] sm:min-w-[320px] xl:min-w-0 snap-center bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col hover:shadow-md transition-shadow">
               <div class="p-4 border-b border-gray-100 bg-gray-50/50 rounded-t-2xl">
                 <div class="flex justify-between items-center mb-1">
-                  <div class="font-bold text-gray-800 text-sm">${daysOfWeek[dayIdx]}</div>
-                  <button class="text-blue-500 hover:text-blue-700 auto-fill-day" data-day="${dayKey}" title="Auto-fill Giorno">
-                    <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+                  <div class="font-black text-gray-900 text-sm uppercase tracking-wider">${daysOfWeek[dayIdx]}</div>
+                  <button class="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all auto-fill-day" data-day="${dayKey}" title="Auto-fill Giorno">
+                    <i data-lucide="wand-2" class="w-4 h-4"></i>
                   </button>
                 </div>
-                <div class="text-center text-[10px] font-bold ${dayCals > dailyCals ? 'text-red-500' : 'text-green-500'}">${Math.round(dayCals)} / ${dailyCals} Kcal</div>
+                <div class="flex items-center justify-between">
+                  <div class="text-[10px] font-black uppercase tracking-tighter text-gray-400">Totale Kcal</div>
+                  <div class="text-xs font-black ${dayCals > dailyCals ? 'text-red-500' : 'text-green-600'}">${Math.round(dayCals)} / ${dailyCals}</div>
+                </div>
               </div>
-              <div class="p-3 space-y-5 flex-1">
+              <div class="p-4 space-y-6 flex-1">
                 ${mealKeys.map((mealKey, idx) => {
                   const mealRecipes = (plan.days[dayKey]?.[mealKey] || []).map(id => recipes.find(r => r.id === id)).filter(Boolean);
                   return `
-                    <div class="space-y-2">
+                    <div class="space-y-3">
                       <div class="flex justify-between items-center px-1">
-                        <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">${meals[idx]}</span>
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                          <span class="w-1.5 h-1.5 rounded-full bg-blue-500/50"></span>
+                          ${meals[idx]}
+                        </span>
                         <div class="flex items-center gap-1">
-                          <button class="text-blue-400 hover:text-blue-600 auto-fill-meal" data-day="${dayKey}" data-meal="${mealKey}" title="Auto-fill Pasto">
-                            <i data-lucide="wand-2" class="w-3 h-3"></i>
+                          <button class="p-1.5 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all auto-fill-meal" data-day="${dayKey}" data-meal="${mealKey}" title="Auto-fill Pasto">
+                            <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
                           </button>
-                          <button class="text-blue-500 hover:text-blue-700 add-to-meal" data-day="${dayKey}" data-meal="${mealKey}">
-                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                          <button class="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all add-to-meal" data-day="${dayKey}" data-meal="${mealKey}">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
                           </button>
                         </div>
                       </div>
-                      <div class="space-y-1.5">
+                      <div class="space-y-2">
                         ${mealRecipes.length ? mealRecipes.map(r => {
                           const targetCals = getMealTargetCals(user, mealKey);
                           const scaledR = getScaledRecipe(r, targetCals);
                           const totals = scaledR.totals;
                           return `
-                            <div class="group p-2 bg-blue-50/50 hover:bg-blue-100/50 rounded-lg text-[11px] cursor-pointer recipe-item relative transition-colors" data-id="${r.id}" data-meal="${mealKey}">
-                              <div class="font-bold text-blue-900 pr-4 leading-tight">${r.name}</div>
-                              <div class="text-[9px] text-blue-600 mt-0.5">${Math.round(totals.calories)} Kcal (Adattata)</div>
-                              <button class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 remove-from-meal transition-opacity" 
+                            <div class="group p-3 bg-gray-50/50 hover:bg-white hover:shadow-sm border border-transparent hover:border-blue-100 rounded-xl cursor-pointer recipe-item relative transition-all active:scale-[0.98]" data-id="${r.id}" data-meal="${mealKey}">
+                              <div class="font-black text-gray-800 text-xs pr-6 leading-tight mb-1">${r.name}</div>
+                              <div class="text-[9px] font-bold text-blue-600 uppercase tracking-tighter bg-blue-50/50 px-2 py-0.5 rounded-md inline-block">${Math.round(totals.calories)} Kcal</div>
+                              <button class="absolute top-2.5 right-2.5 opacity-100 sm:opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded-lg transition-all remove-from-meal" 
                                 data-day="${dayKey}" data-meal="${mealKey}" data-id="${r.id}">
-                                <i data-lucide="x" class="w-3 h-3"></i>
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
                               </button>
                             </div>
                           `;
-                        }).join('') : '<div class="text-[9px] text-gray-300 italic px-1">Vuoto</div>'}
+                        }).join('') : `
+                          <div class="text-[9px] text-gray-300 font-black uppercase tracking-widest py-3 text-center border border-dashed border-gray-100 rounded-xl">
+                            Vuoto
+                          </div>
+                        `}
                       </div>
                     </div>
                   `;
@@ -392,23 +441,34 @@ export async function PlansPage() {
 
   function renderMonthView(plan, dailyCals, user) {
     return `
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
-        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <i data-lucide="calendar" class="w-8 h-8"></i>
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-12 text-center overflow-hidden relative">
+        <div class="absolute top-0 right-0 p-8 opacity-5">
+          <i data-lucide="calendar" class="w-32 h-32 text-blue-600"></i>
         </div>
-        <h3 class="text-xl font-bold text-gray-800 mb-2">Vista Mensile</h3>
-        <p class="text-gray-500 max-w-md mx-auto mb-6">La vista mensile ti permette di avere una panoramica delle calorie e degli obiettivi nutrizionali per le prossime 4 settimane.</p>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-          ${[1,2,3,4].map(w => `
-            <div class="p-6 border border-gray-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all group">
-              <div class="text-xs font-bold text-gray-400 uppercase mb-2">Settimana ${w}</div>
-              <div class="text-2xl font-black text-gray-800 mb-1">${Math.round(dailyCals * 7)}</div>
-              <div class="text-[10px] font-bold text-gray-400 uppercase mb-4">Kcal Totali</div>
-              <button class="w-full py-2 bg-white border border-blue-100 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm generate-week-btn" data-week="${w}">
-                Rigenera
-              </button>
-            </div>
-          `).join('')}
+        
+        <div class="relative z-10">
+          <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-3">
+            <i data-lucide="calendar" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-2xl font-black text-gray-900 mb-3">Pianificazione Mensile</h3>
+          <p class="text-gray-500 max-w-md mx-auto mb-10 text-sm font-medium">Panoramica degli obiettivi nutrizionali per le prossime 4 settimane basata sul tuo profilo.</p>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+            ${[1, 2, 3, 4].map(w => `
+              <div class="p-6 bg-gray-50/50 border border-gray-100 rounded-2xl hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-500/5 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-4">Settimana ${w}</div>
+                <div class="flex items-baseline justify-center gap-1 mb-1">
+                  <div class="text-3xl font-black text-gray-900">${Math.round(dailyCals * 7).toLocaleString()}</div>
+                  <div class="text-xs font-black text-gray-400">Kcal</div>
+                </div>
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mb-6">Target Settimanale</div>
+                <button class="w-full py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm active:scale-95 generate-week-btn" data-week="${w}">
+                  Rigenera
+                </button>
+              </div>
+            `).join('')}
+          </div>
         </div>
       </div>
     `;
@@ -416,29 +476,36 @@ export async function PlansPage() {
 
   function showAddRecipeToMealModal(day, meal) {
     const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm';
+    modal.className = 'fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm animate-fade-in';
     modal.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 animate-scale-in">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 sm:p-8 max-h-[90vh] overflow-y-auto custom-scrollbar animate-scale-in">
         <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold text-gray-800">Aggiungi a ${meals[mealKeys.indexOf(meal)]}</h3>
-          <button id="close-modal" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+          <h3 class="text-2xl font-black text-gray-900">Aggiungi a ${meals[mealKeys.indexOf(meal)]}</h3>
+          <button id="close-modal-top" class="p-2 hover:bg-gray-100 rounded-xl transition-all">
+            <i data-lucide="x" class="w-6 h-6 text-gray-400"></i>
+          </button>
         </div>
         
         <div class="relative mb-6">
-          <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
-          <input type="text" id="recipe-search" placeholder="Cerca ricetta..." class="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500">
+          <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+          <input type="text" id="recipe-search" placeholder="Cerca ricetta..." class="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl text-sm font-bold transition-all outline-none">
         </div>
 
-        <div class="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar" id="modal-recipe-list">
+        <div class="space-y-3" id="modal-recipe-list">
           ${recipes.map(r => {
             const totals = r.totals || calculateTotals(r.ingredients);
             return `
-              <button class="w-full text-left p-4 rounded-xl hover:bg-blue-50 border border-gray-100 transition-all flex justify-between items-center group select-recipe" data-id="${r.id}">
+              <button class="w-full text-left p-4 rounded-2xl hover:bg-blue-50 border-2 border-transparent hover:border-blue-100 transition-all flex justify-between items-center group select-recipe active:scale-[0.98]" data-id="${r.id}">
                 <div>
-                  <div class="font-bold text-gray-800 group-hover:text-blue-700 transition-colors">${r.name}</div>
-                  <div class="text-xs text-gray-500">${Math.round(totals.calories)} Kcal • ${r.difficulty || 'Media'}</div>
+                  <div class="font-black text-gray-800 group-hover:text-blue-700 transition-colors">${r.name}</div>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md uppercase tracking-tighter">${Math.round(totals.calories)} Kcal</span>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">${r.difficulty || 'Media'}</span>
+                  </div>
                 </div>
-                <i data-lucide="plus-circle" class="w-5 h-5 text-gray-300 group-hover:text-blue-500 transition-all"></i>
+                <div class="w-10 h-10 rounded-xl bg-gray-50 text-gray-300 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-all">
+                  <i data-lucide="plus-circle" class="w-6 h-6"></i>
+                </div>
               </button>
             `;
           }).join('')}
@@ -449,9 +516,15 @@ export async function PlansPage() {
     document.body.appendChild(modal);
     if (window.lucide) window.lucide.createIcons();
 
-    modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
+    const closeModal = () => {
+      modal.classList.add('animate-fade-out');
+      modal.querySelector('.animate-scale-in').classList.add('animate-scale-out');
+      setTimeout(() => modal.remove(), 300);
+    };
+
+    modal.querySelector('#close-modal-top').addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.remove();
+      if (e.target === modal) closeModal();
     });
     
     const searchInput = modal.querySelector('#recipe-search');
@@ -459,7 +532,7 @@ export async function PlansPage() {
       const term = e.target.value.toLowerCase();
       const items = modal.querySelectorAll('.select-recipe');
       items.forEach(item => {
-        const name = item.querySelector('.font-bold').textContent.toLowerCase();
+        const name = item.querySelector('.font-black').textContent.toLowerCase();
         item.classList.toggle('hidden', !name.includes(term));
       });
     });
@@ -473,7 +546,7 @@ export async function PlansPage() {
         plan.days[day][meal].push(id);
         
         store.update('plans', plan.id, plan);
-        modal.remove();
+        closeModal();
         render();
       });
     });
@@ -612,7 +685,7 @@ export async function PlansPage() {
 
   function showToast(message) {
     const toast = document.createElement('div');
-    toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl z-[100] animate-bounce-in flex items-center gap-3';
+    toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl z-[100] animate-bounce-in flex items-center gap-3 w-[90%] sm:w-auto justify-center';
     toast.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i> <span class="text-sm font-bold">${message}</span>`;
     document.body.appendChild(toast);
     if (window.lucide) window.lucide.createIcons();
@@ -637,17 +710,5 @@ export async function PlansPage() {
 
   render();
   
-  // Add day navigation listeners
-  container.addEventListener('click', (e) => {
-    if (e.target.closest('#prev-day')) {
-      selectedDayIndex = (selectedDayIndex - 1 + 7) % 7;
-      render();
-    }
-    if (e.target.closest('#next-day')) {
-      selectedDayIndex = (selectedDayIndex + 1) % 7;
-      render();
-    }
-  });
-
   return container;
 }

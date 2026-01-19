@@ -127,59 +127,67 @@ export async function RecipesPage() {
     });
 
     container.innerHTML = `
-      <div class="space-y-6">
-        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-          <div class="flex flex-col md:flex-row items-start md:items-center gap-4 w-full xl:w-auto">
-            <h2 class="text-2xl font-bold text-gray-800 shrink-0">Ricettario</h2>
-            
-            <div class="flex flex-wrap items-center gap-3 w-full">
-              <!-- Context Selector -->
-              <div class="flex items-center gap-2 bg-blue-50/50 p-1.5 rounded-lg border border-blue-100">
-                <i data-lucide="user" class="w-4 h-4 text-blue-600 ml-1"></i>
-                <select id="user-context" class="bg-transparent text-sm font-bold text-blue-700 border-none focus:ring-0 cursor-pointer py-1">
-                  <option value="">Nessun Utente</option>
-                  ${users.map(u => `<option value="${u.id}" ${u.id === selectedUserId ? 'selected' : ''}>${u.name}</option>`).join('')}
+      <div class="space-y-4">
+        <!-- Header Section -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-black text-gray-900">Ricettario</h2>
+              <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">${recipes.length} ricette disponibili</p>
+            </div>
+            <button id="add-recipe-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 text-sm font-black transition-all shadow-md active:scale-95">
+              <i data-lucide="plus" class="w-5 h-5"></i>
+              <span class="hidden sm:inline">Nuova Ricetta</span>
+            </button>
+          </div>
+
+          <!-- Filters Row -->
+          <div class="flex flex-col gap-3">
+            <!-- Search -->
+            <div class="relative w-full">
+              <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+              <input type="text" id="recipe-search-input" placeholder="Cerca ricette o ingredienti..." 
+                value="${searchTerm}"
+                class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm transition-all">
+            </div>
+
+            <!-- Selectors and Sort -->
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- User Context -->
+              <div class="flex-1 min-w-[140px] relative">
+                <select id="user-context" class="w-full pl-9 pr-3 py-2 bg-blue-50/50 text-blue-700 text-xs font-black rounded-xl border border-blue-100 focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer">
+                  <option value="">Profilo: Default</option>
+                  ${users.map(u => `<option value="${u.id}" ${u.id === selectedUserId ? 'selected' : ''}>Profilo: ${u.name}</option>`).join('')}
                 </select>
-                <div class="w-px h-4 bg-blue-200 mx-1"></div>
-                <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i>
-                <select id="meal-context" class="bg-transparent text-sm font-bold text-blue-700 border-none focus:ring-0 cursor-pointer py-1">
-                  <option value="">Qualsiasi Pasto</option>
+                <i data-lucide="user" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-600 pointer-events-none"></i>
+              </div>
+
+              <!-- Meal Context -->
+              <div class="flex-1 min-w-[140px] relative">
+                <select id="meal-context" class="w-full pl-9 pr-3 py-2 bg-orange-50/50 text-orange-700 text-xs font-black rounded-xl border border-orange-100 focus:ring-2 focus:ring-orange-500 appearance-none cursor-pointer">
+                  <option value="">Tutti i Pasti</option>
                   ${['Colazione', 'Pranzo', 'Cena', 'Merenda'].map(m => `<option value="${m}" ${m === selectedMeal ? 'selected' : ''}>${m}</option>`).join('')}
                 </select>
+                <i data-lucide="clock" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-600 pointer-events-none"></i>
               </div>
 
               <!-- Sorting -->
-              <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200">
-                <i data-lucide="filter" class="w-4 h-4 text-gray-500 ml-1"></i>
-                <select id="sort-by" class="bg-transparent text-sm font-medium text-gray-700 border-none focus:ring-0 cursor-pointer py-1">
-                  <option value="name" ${sortBy === 'name' ? 'selected' : ''}>Nome</option>
-                  <option value="time" ${sortBy === 'time' ? 'selected' : ''}>Tempo</option>
-                  <option value="difficulty" ${sortBy === 'difficulty' ? 'selected' : ''}>Difficoltà</option>
-                  <option value="kcal" ${sortBy === 'kcal' ? 'selected' : ''}>Kcal</option>
+              <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border border-gray-200">
+                <select id="sort-by" class="bg-transparent text-[10px] font-black text-gray-600 border-none focus:ring-0 cursor-pointer py-1 pl-2 pr-6 appearance-none">
+                  <option value="name" ${sortBy === 'name' ? 'selected' : ''}>ORDINA: NOME</option>
+                  <option value="time" ${sortBy === 'time' ? 'selected' : ''}>ORDINA: TEMPO</option>
+                  <option value="difficulty" ${sortBy === 'difficulty' ? 'selected' : ''}>ORDINA: DIFF.</option>
+                  <option value="kcal" ${sortBy === 'kcal' ? 'selected' : ''}>ORDINA: KCAL</option>
                 </select>
-                <button id="toggle-sort-order" class="p-1 hover:bg-gray-200 rounded text-gray-500">
-                  <i data-lucide="${sortOrder === 'asc' ? 'arrow-up-narrow-wide' : 'arrow-down-wide-narrow'}" class="w-4 h-4"></i>
+                <button id="toggle-sort-order" class="p-1.5 hover:bg-gray-200 rounded-lg text-gray-500 transition-colors">
+                  <i data-lucide="${sortOrder === 'asc' ? 'arrow-up-narrow-wide' : 'arrow-down-wide-narrow'}" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
             </div>
           </div>
-          
-          <div class="flex gap-3 w-full xl:w-auto">
-            <div class="relative flex-1 md:w-64">
-              <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
-              <input type="text" id="recipe-search-input" placeholder="Cerca ricette..." 
-                value="${searchTerm}"
-                class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
-            </div>
-            
-            <button id="add-recipe-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-bold transition-all shrink-0 shadow-sm shadow-blue-100">
-              <i data-lucide="plus" class="w-4 h-4"></i>
-              Nuova
-            </button>
-          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="recipe-list">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6" id="recipe-list">
           ${filteredRecipes.length > 0 ? filteredRecipes.map(recipe => {
             const baseTotals = recipe.totals || calculateTotals(recipe.ingredients);
             let displayTotals = baseTotals;
@@ -198,7 +206,7 @@ export async function RecipesPage() {
 
             return `
               <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300 group recipe-card" data-id="${recipe.id}">
-                <div class="h-52 bg-gray-200 relative overflow-hidden">
+                <div class="h-44 sm:h-52 bg-gray-200 relative overflow-hidden">
                   <img src="${recipe.image || 'https://via.placeholder.com/400x300'}" 
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                   <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -209,52 +217,52 @@ export async function RecipesPage() {
                     ${isAdapted ? `<span class="px-2 py-1 bg-green-600 shadow-sm rounded-lg text-[10px] font-extrabold text-white uppercase tracking-tighter">Adattata</span>` : ''}
                   </div>
 
-                  <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-[-10px] group-hover:translate-y-0 transition-all duration-300">
-                    <button class="p-2.5 bg-white rounded-xl text-gray-600 hover:text-blue-600 hover:shadow-lg edit-recipe transition-all" data-id="${recipe.id}" onclick="event.stopPropagation()">
+                  <div class="absolute top-3 right-3 flex gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 translate-y-0 sm:translate-y-[-10px] group-hover:translate-y-0 transition-all duration-300">
+                    <button class="p-2.5 bg-white/95 backdrop-blur rounded-xl text-gray-600 hover:text-blue-600 hover:shadow-lg edit-recipe transition-all" data-id="${recipe.id}" onclick="event.stopPropagation()">
                       <i data-lucide="edit-2" class="w-4 h-4"></i>
                     </button>
-                    <button class="p-2.5 bg-white rounded-xl text-gray-600 hover:text-red-600 hover:shadow-lg delete-recipe transition-all" data-id="${recipe.id}" onclick="event.stopPropagation()">
+                    <button class="p-2.5 bg-white/95 backdrop-blur rounded-xl text-gray-600 hover:text-red-600 hover:shadow-lg delete-recipe transition-all" data-id="${recipe.id}" onclick="event.stopPropagation()">
                       <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                   </div>
                 </div>
 
-                <div class="p-5 flex-1 flex flex-col">
+                <div class="p-4 sm:p-5 flex-1 flex flex-col">
                   <div class="mb-3">
                     <div class="flex flex-wrap gap-1 mb-2">
                       ${(recipe.mealCategories || []).map(cat => `
                         <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-[9px] font-bold uppercase border border-blue-100">${cat}</span>
                       `).join('')}
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">${recipe.name}</h3>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">${recipe.name}</h3>
                   </div>
 
-                  <div class="grid grid-cols-4 gap-2 mb-5">
-                    <div class="text-center p-2 bg-blue-50/50 rounded-xl border border-blue-100/50">
-                      <div class="text-[9px] text-blue-400 uppercase font-black mb-0.5">Kcal</div>
-                      <div class="text-sm font-black text-blue-700">${Math.round(displayTotals.calories)}</div>
+                  <div class="grid grid-cols-4 gap-1.5 sm:gap-2 mb-4 sm:mb-5">
+                    <div class="text-center p-1.5 sm:p-2 bg-blue-50/50 rounded-xl border border-blue-100/50">
+                      <div class="text-[8px] sm:text-[9px] text-blue-400 uppercase font-black mb-0.5">Kcal</div>
+                      <div class="text-xs sm:text-sm font-black text-blue-700">${Math.round(displayTotals.calories)}</div>
                     </div>
-                    <div class="text-center p-2 bg-green-50/50 rounded-xl border border-green-100/50">
-                      <div class="text-[9px] text-green-400 uppercase font-black mb-0.5">Pro</div>
-                      <div class="text-sm font-black text-green-700">${Math.round(displayTotals.protein)}g</div>
+                    <div class="text-center p-1.5 sm:p-2 bg-green-50/50 rounded-xl border border-green-100/50">
+                      <div class="text-[8px] sm:text-[9px] text-green-400 uppercase font-black mb-0.5">Pro</div>
+                      <div class="text-xs sm:text-sm font-black text-green-700">${Math.round(displayTotals.protein)}g</div>
                     </div>
-                    <div class="text-center p-2 bg-yellow-50/50 rounded-xl border border-yellow-100/50">
-                      <div class="text-[9px] text-yellow-400 uppercase font-black mb-0.5">Carb</div>
-                      <div class="text-sm font-black text-yellow-700">${Math.round(displayTotals.carbs)}g</div>
+                    <div class="text-center p-1.5 sm:p-2 bg-yellow-50/50 rounded-xl border border-yellow-100/50">
+                      <div class="text-[8px] sm:text-[9px] text-yellow-400 uppercase font-black mb-0.5">Carb</div>
+                      <div class="text-xs sm:text-sm font-black text-yellow-700">${Math.round(displayTotals.carbs)}g</div>
                     </div>
-                    <div class="text-center p-2 bg-red-50/50 rounded-xl border border-red-100/50">
-                      <div class="text-[9px] text-red-400 uppercase font-black mb-0.5">Fat</div>
-                      <div class="text-sm font-black text-red-700">${Math.round(displayTotals.fats)}g</div>
+                    <div class="text-center p-1.5 sm:p-2 bg-red-50/50 rounded-xl border border-red-100/50">
+                      <div class="text-[8px] sm:text-[9px] text-red-400 uppercase font-black mb-0.5">Fat</div>
+                      <div class="text-xs sm:text-sm font-black text-red-700">${Math.round(displayTotals.fats)}g</div>
                     </div>
                   </div>
 
-                  <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
+                  <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-50 flex items-center justify-between">
                     <div class="flex flex-wrap gap-1">
                       ${(recipe.tags || []).slice(0, 2).map(tag => `
-                        <span class="text-[10px] font-bold text-gray-400 uppercase">#${tag}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase">#${tag}</span>
                       `).join('')}
                     </div>
-                    <div class="text-blue-600 font-bold text-xs flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="text-blue-600 font-bold text-[10px] sm:text-xs flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                       Dettagli <i data-lucide="chevron-right" class="w-3 h-3"></i>
                     </div>
                   </div>
@@ -369,25 +377,33 @@ export async function RecipesPage() {
       );
 
       modal.innerHTML = `
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
-          <h3 class="text-xl font-bold mb-4">${recipe ? 'Modifica Ricetta' : 'Aggiungi Ricetta'}</h3>
-          <form id="recipe-form" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div class="space-y-4">
+        <div class="bg-white rounded-none sm:rounded-xl shadow-xl w-full max-w-4xl p-4 sm:p-6 h-full sm:h-auto max-h-screen sm:max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center mb-6 sm:mb-4">
+            <h3 class="text-xl font-black text-gray-900">${recipe ? 'Modifica Ricetta' : 'Aggiungi Ricetta'}</h3>
+            <button type="button" id="close-modal-top" class="sm:hidden p-2 text-gray-400 hover:text-gray-600">
+              <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+          </div>
+          
+          <form id="recipe-form" class="space-y-6 pb-20 sm:pb-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+              <div class="space-y-5">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700">Nome Ricetta</label>
-                  <input type="text" name="name" value="${recipe?.name || ''}" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Nome Ricetta</label>
+                  <input type="text" name="name" value="${recipe?.name || ''}" required 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Esempio: Pasta al Pomodoro">
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Categorie Pasto</label>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Categorie Pasto</label>
                   <div class="grid grid-cols-2 gap-2">
                     ${['Colazione', 'Pranzo', 'Cena', 'Merenda'].map(cat => `
-                      <label class="flex items-center gap-2 p-2 border border-gray-100 rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label class="flex items-center gap-2 p-3 bg-gray-50 border border-gray-100 rounded-xl cursor-pointer hover:bg-blue-50 hover:border-blue-100 transition-all">
                         <input type="checkbox" name="mealCategories" value="${cat}" 
                           ${(recipe?.mealCategories || []).includes(cat) ? 'checked' : ''}
-                          class="rounded text-blue-600 focus:ring-blue-500">
-                        <span class="text-sm text-gray-700">${cat}</span>
+                          class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300">
+                        <span class="text-sm font-bold text-gray-700">${cat}</span>
                       </label>
                     `).join('')}
                   </div>
@@ -395,78 +411,89 @@ export async function RecipesPage() {
 
                 <div>
                   <div class="flex justify-between items-center mb-2">
-                    <label class="block text-sm font-medium text-gray-700">Ingredienti</label>
-                    <button type="button" id="add-ing-row" class="text-blue-600 text-xs font-bold hover:underline">+ Aggiungi</button>
+                    <label class="block text-xs font-black text-gray-500 uppercase tracking-widest">Ingredienti</label>
+                    <button type="button" id="add-ing-row" class="bg-blue-50 text-blue-600 text-[10px] font-black uppercase px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-all">+ Aggiungi</button>
                   </div>
-                  <div id="ingredients-list" class="space-y-2 max-h-[200px] overflow-y-auto p-1">
+                  <div id="ingredients-list" class="space-y-2 max-h-[250px] overflow-y-auto p-1 scrollbar-hide">
                     ${currentIngredients.map((ing, idx) => `
-                      <div class="flex gap-2 items-center">
-                        <select class="flex-1 border border-gray-300 rounded-lg px-2 py-1 text-sm ing-food" data-idx="${idx}">
+                      <div class="flex gap-2 items-center bg-gray-50 p-2 rounded-xl border border-gray-100">
+                        <select class="flex-1 bg-transparent border-none focus:ring-0 text-sm font-bold text-gray-700 ing-food" data-idx="${idx}">
                           ${foods.map(f => `<option value="${f.id}" ${f.id === ing.foodId ? 'selected' : ''}>${f.name}</option>`).join('')}
                         </select>
-                        <input type="number" value="${ing.amount}" class="w-20 border border-gray-300 rounded-lg px-2 py-1 text-sm ing-amount" data-idx="${idx}" placeholder="g">
-                        <button type="button" class="text-red-500 remove-ing" data-idx="${idx}"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        <div class="flex items-center gap-1 bg-white px-2 py-1 rounded-lg border border-gray-200">
+                          <input type="number" value="${ing.amount}" 
+                            class="w-14 bg-transparent border-none focus:ring-0 text-sm font-black text-right ing-amount" 
+                            data-idx="${idx}" placeholder="0">
+                          <span class="text-[10px] font-black text-gray-400">G</span>
+                        </div>
+                        <button type="button" class="p-2 text-red-400 hover:text-red-600 remove-ing" data-idx="${idx}">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
                       </div>
                     `).join('')}
                   </div>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700">Istruzioni</label>
-                  <textarea name="instructions" rows="4" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">${recipe?.instructions || ''}</textarea>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Istruzioni</label>
+                  <textarea name="instructions" rows="4" required 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Descrivi come preparare il piatto...">${recipe?.instructions || ''}</textarea>
                 </div>
               </div>
 
-              <div class="space-y-4">
+              <div class="space-y-5">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700">Immagine (URL o scegli sotto)</label>
-                  <input type="text" id="image-url-input" name="image" value="${selectedImageUrl}" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Immagine (URL o scegli sotto)</label>
+                  <input type="text" id="image-url-input" name="image" value="${selectedImageUrl}" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="https://esempio.it/immagine.jpg">
                 </div>
                 
-                <div class="space-y-2">
+                <div class="space-y-3">
                   <div class="flex justify-between items-center">
-                    <label class="block text-sm font-medium text-gray-700">Galleria Ricette</label>
+                    <label class="block text-xs font-black text-gray-500 uppercase tracking-widest">Galleria Ricette</label>
                     <div class="relative">
-                      <i data-lucide="search" class="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400"></i>
-                      <input type="text" id="gallery-search" placeholder="Cerca immagini..." 
+                      <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400"></i>
+                      <input type="text" id="gallery-search" placeholder="Cerca..." 
                         value="${gallerySearchTerm}"
-                        class="pl-7 pr-2 py-1 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-blue-500">
+                        class="pl-9 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 w-32 sm:w-48 transition-all">
                     </div>
                   </div>
-                  <div class="grid grid-cols-2 gap-2 overflow-y-auto max-h-[160px] border border-gray-100 p-2 rounded-lg">
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 overflow-y-auto max-h-[200px] border border-gray-100 p-2 rounded-xl scrollbar-hide">
                     ${filteredGallery.length > 0 ? filteredGallery.map(img => `
-                      <img src="${img.url}" alt="${img.name}" 
-                        class="w-full h-20 object-cover rounded-md cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all image-option ${selectedImageUrl === img.url ? 'ring-2 ring-blue-600' : ''}" 
-                        data-url="${img.url}">
-                    `).join('') : '<p class="col-span-2 text-center text-xs text-gray-400 py-4">Nessuna immagine locale trovata</p>'}
-                    <div class="col-span-2 mt-2 p-3 bg-gray-50 rounded-lg border border-gray-100 text-center">
-                      <p class="text-[10px] text-gray-500 mb-2">Puoi anche cercare immagini gratuite su Unsplash:</p>
-                      <a href="${getUnsplashUrl('cibo sano')}" target="_blank" id="unsplash-link"
-                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 text-gray-600 text-[10px] font-bold rounded-md hover:bg-gray-50 transition-colors shadow-sm">
-                        <i data-lucide="external-link" class="w-3 h-3"></i>
-                        Vai su Unsplash
-                      </a>
-                    </div>
+                      <div class="relative group">
+                        <img src="${img.url}" alt="${img.name}" 
+                          class="w-full h-24 object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all image-option ${selectedImageUrl === img.url ? 'ring-4 ring-blue-600' : ''}" 
+                          data-url="${img.url}">
+                        ${selectedImageUrl === img.url ? '<div class="absolute top-1 right-1 bg-blue-600 text-white p-1 rounded-full shadow-lg"><i data-lucide="check" class="w-3 h-3"></i></div>' : ''}
+                      </div>
+                    `).join('') : '<p class="col-span-full text-center text-xs text-gray-400 py-8">Nessuna immagine trovata</p>'}
                   </div>
                 </div>
 
-                <div class="p-2 border border-blue-100 bg-blue-50 rounded-lg text-center">
-                  <p class="text-xs text-blue-600 font-medium mb-1">Anteprima Ricetta</p>
-                  <img id="modal-image-preview" src="${selectedImageUrl || 'https://via.placeholder.com/150'}" class="h-40 w-full object-cover rounded-lg mx-auto border border-white shadow-sm">
+                <div class="p-3 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-4">
+                  <div class="w-20 h-20 bg-white rounded-xl overflow-hidden border border-blue-200 shrink-0">
+                    <img id="modal-image-preview" src="${selectedImageUrl || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover">
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Anteprima</p>
+                    <p class="text-xs text-blue-800 font-bold leading-tight">L'immagine apparirà così nel ricettario</p>
+                  </div>
                 </div>
 
-                <div class="bg-gray-50 p-4 rounded-lg">
-                  <div class="text-xs font-bold text-gray-400 uppercase mb-2">Totali Nutrizionali (Stimati)</div>
-                  <div id="recipe-totals" class="grid grid-cols-4 gap-4">
+                <div class="bg-gray-900 p-5 rounded-2xl shadow-lg">
+                  <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Totali Nutrizionali Stimati</div>
+                  <div id="recipe-totals" class="grid grid-cols-4 gap-2">
                     <!-- Calculated dynamically -->
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-              <button type="button" id="close-modal" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">Annulla</button>
-              <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition-colors shadow-sm">Salva Ricetta</button>
+            <div class="fixed sm:static bottom-0 left-0 right-0 p-4 sm:p-0 bg-white sm:bg-transparent border-t sm:border-t-0 border-gray-100 flex gap-3 sm:pt-6 sm:justify-end z-10">
+              <button type="button" id="close-modal" class="flex-1 sm:flex-none px-6 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition-all">Annulla</button>
+              <button type="submit" class="flex-1 sm:flex-none px-8 py-3 bg-blue-600 text-white font-black rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95">Salva Ricetta</button>
             </div>
           </form>
         </div>
@@ -477,6 +504,8 @@ export async function RecipesPage() {
       const previewImg = modal.querySelector('#modal-image-preview');
       const urlInput = modal.querySelector('#image-url-input');
       const gallerySearch = modal.querySelector('#gallery-search');
+
+      modal.querySelector('#close-modal-top')?.addEventListener('click', () => modal.remove());
 
       function attachImageOptionListeners() {
         modal.querySelectorAll('.image-option').forEach(img => {
@@ -613,10 +642,22 @@ export async function RecipesPage() {
       const totalsContainer = modal.querySelector('#recipe-totals');
       if (totalsContainer) {
         totalsContainer.innerHTML = `
-          <div class="text-center"><div class="text-lg font-bold">${Math.round(totals.calories)}</div><div class="text-[10px] text-gray-500">Kcal</div></div>
-          <div class="text-center"><div class="text-lg font-bold">${Math.round(totals.protein)}g</div><div class="text-[10px] text-gray-500">Pro</div></div>
-          <div class="text-center"><div class="text-lg font-bold">${Math.round(totals.carbs)}g</div><div class="text-[10px] text-gray-500">Carb</div></div>
-          <div class="text-center"><div class="text-lg font-bold">${Math.round(totals.fats)}g</div><div class="text-[10px] text-gray-500">Fat</div></div>
+          <div class="text-center p-2 bg-white/5 rounded-xl border border-white/5">
+            <div class="text-sm font-black text-white">${Math.round(totals.calories)}</div>
+            <div class="text-[8px] text-gray-500 uppercase font-black">Kcal</div>
+          </div>
+          <div class="text-center p-2 bg-white/5 rounded-xl border border-white/5">
+            <div class="text-sm font-black text-green-400">${Math.round(totals.protein)}g</div>
+            <div class="text-[8px] text-gray-500 uppercase font-black">Pro</div>
+          </div>
+          <div class="text-center p-2 bg-white/5 rounded-xl border border-white/5">
+            <div class="text-sm font-black text-yellow-400">${Math.round(totals.carbs)}g</div>
+            <div class="text-[8px] text-gray-500 uppercase font-black">Carb</div>
+          </div>
+          <div class="text-center p-2 bg-white/5 rounded-xl border border-white/5">
+            <div class="text-sm font-black text-red-400">${Math.round(totals.fats)}g</div>
+            <div class="text-[8px] text-gray-500 uppercase font-black">Fat</div>
+          </div>
         `;
       }
     }
@@ -665,98 +706,111 @@ export function showRecipeDetailModal(recipe, foods, targetCals = null) {
   }
 
   modal.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
-        <div class="flex-1 overflow-y-auto scrollbar-hide">
-          <div class="relative h-64 md:h-80 shrink-0">
+      <div class="bg-white rounded-none sm:rounded-2xl shadow-2xl w-full max-w-4xl h-full sm:h-auto max-h-screen sm:max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
+        <div class="flex-1 overflow-y-auto scrollbar-hide pb-20 sm:pb-0">
+          <div class="relative h-56 sm:h-80 shrink-0">
             <img src="${recipe.image || 'https://via.placeholder.com/800x600'}" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-            <button id="close-detail" class="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/40 rounded-full text-white transition-colors z-10">
-              <i data-lucide="x" class="w-6 h-6"></i>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <button id="close-detail" class="absolute top-4 right-4 p-2.5 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full text-white transition-all z-10 active:scale-90">
+              <i data-lucide="x" class="w-5 h-5 sm:w-6 sm:h-6"></i>
             </button>
-            <div class="absolute bottom-6 left-6 right-6">
-              <div class="flex gap-2 mb-2">
-                <span class="px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-bold uppercase tracking-wider">${recipe.difficulty || 'Media'}</span>
-                <span class="px-2 py-1 bg-white/20 text-white rounded text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">${recipe.prepTime || '30 min'}</span>
-                ${targetCals ? '<span class="px-2 py-1 bg-green-600 text-white rounded text-[10px] font-bold uppercase tracking-wider">Adattata</span>' : ''}
+            <div class="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
+              <div class="flex flex-wrap gap-1.5 mb-2">
+                <span class="px-2 py-0.5 bg-blue-600 text-white rounded-lg text-[9px] font-black uppercase tracking-wider">${recipe.difficulty || 'Media'}</span>
+                <span class="px-2 py-0.5 bg-white/20 text-white rounded-lg text-[9px] font-black uppercase tracking-wider backdrop-blur-md border border-white/10">${recipe.prepTime || '30 min'}</span>
+                ${targetCals ? '<span class="px-2 py-0.5 bg-green-600 text-white rounded-lg text-[9px] font-black uppercase tracking-wider shadow-lg">Adattata</span>' : ''}
               </div>
-              <h2 class="text-3xl font-bold text-white mb-2">${recipe.name}</h2>
-              <div class="flex gap-4 text-white/90 text-sm">
-                <div class="flex items-center gap-1"><i data-lucide="flame" class="w-4 h-4 text-orange-400"></i> ${Math.round(totals.calories)} Kcal</div>
-                <div class="flex items-center gap-1"><i data-lucide="leaf" class="w-4 h-4 text-green-400"></i> ${recipe.tags?.join(', ') || 'Naturale'}</div>
+              <h2 class="text-2xl sm:text-3xl font-black text-white mb-2 leading-tight">${recipe.name}</h2>
+              <div class="flex flex-wrap gap-3 text-white/90 text-xs font-bold uppercase tracking-wider">
+                <div class="flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-orange-400"></i> ${Math.round(totals.calories)} Kcal</div>
+                <div class="flex items-center gap-1.5"><i data-lucide="tag" class="w-4 h-4 text-blue-400"></i> ${recipe.tags?.slice(0, 2).join(', ') || 'Naturale'}</div>
               </div>
             </div>
           </div>
 
-          <div class="p-8">
+          <div class="p-5 sm:p-8">
             ${targetCals ? `
-              <div class="mb-8 p-4 bg-blue-50 border border-blue-100 rounded-xl flex items-center gap-4 animate-fade-in">
-                <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shrink-0">
+              <div class="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center gap-4 animate-fade-in">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-200">
                   <i data-lucide="info" class="w-5 h-5 text-white"></i>
                 </div>
-                <p class="text-sm text-blue-800">
-                  Questa ricetta è stata <strong>adattata automaticamente</strong> alle tue esigenze caloriche. Le dosi degli ingredienti sono state ricalcolate per un pasto da circa <strong>${Math.round(targetCals)} Kcal</strong>.
+                <p class="text-xs sm:text-sm text-blue-900 font-medium leading-relaxed">
+                  Questa ricetta è stata <strong>adattata</strong> alle tue esigenze caloriche. Le dosi sono state ricalcolate per un pasto da <strong>${Math.round(targetCals)} Kcal</strong>.
                 </p>
               </div>
             ` : ''}
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-              <div class="md:col-span-1 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+              <div class="md:col-span-1 space-y-6 sm:space-y-8">
                 <div>
-                  <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Ingredienti</h3>
-                  <ul class="space-y-3">
+                  <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <i data-lucide="shopping-basket" class="w-4 h-4"></i> Ingredienti
+                  </h3>
+                  <ul class="space-y-2">
                     ${displayIngredients.map(ing => {
                       const food = foods.find(f => f.id === ing.foodId);
                       return `
-                        <li class="flex justify-between items-center text-gray-700 pb-2 border-b border-gray-50">
-                          <span class="font-medium">${food?.name || 'Ingrediente'}</span>
-                          <span class="text-gray-400 text-sm font-bold">${ing.amount}g</span>
+                        <li class="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl border border-gray-100 transition-colors hover:bg-gray-50">
+                          <span class="text-sm font-bold text-gray-700">${food?.name || 'Ingrediente'}</span>
+                          <span class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">${ing.amount}g</span>
                         </li>
                       `;
                     }).join('')}
                   </ul>
                 </div>
 
-                <div class="bg-gray-50 p-6 rounded-xl space-y-4">
-                  <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Macro-nutrienti</h3>
-                  <div class="space-y-3">
+                <div class="bg-gray-900 p-6 rounded-2xl shadow-xl space-y-5">
+                  <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Macro-nutrienti</h3>
+                  <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-600">Proteine</span>
-                      <span class="font-bold text-green-600">${Math.round(totals.protein)}g</span>
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-xs font-bold text-gray-400">Proteine</span>
+                      </div>
+                      <span class="text-sm font-black text-green-400">${Math.round(totals.protein)}g</span>
                     </div>
                     <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-600">Carboidrati</span>
-                      <span class="font-bold text-yellow-600">${Math.round(totals.carbs)}g</span>
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                        <span class="text-xs font-bold text-gray-400">Carboidrati</span>
+                      </div>
+                      <span class="text-sm font-black text-yellow-400">${Math.round(totals.carbs)}g</span>
                     </div>
                     <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-600">Grassi</span>
-                      <span class="font-bold text-red-600">${Math.round(totals.fats)}g</span>
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                        <span class="text-xs font-bold text-gray-400">Grassi</span>
+                      </div>
+                      <span class="text-sm font-black text-red-400">${Math.round(totals.fats)}g</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="md:col-span-2 space-y-8">
+              <div class="md:col-span-2 space-y-6 sm:space-y-8">
                 <div>
-                  <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Preparazione</h3>
-                  <div class="space-y-6">
+                  <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <i data-lucide="chef-hat" class="w-4 h-4"></i> Preparazione
+                  </h3>
+                  <div class="space-y-4">
                     ${(recipe.steps || [recipe.instructions]).map((step, idx) => `
-                      <div class="flex gap-4">
-                        <div class="shrink-0 w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm border border-blue-100">${idx + 1}</div>
-                        <p class="text-gray-700 leading-relaxed pt-1">${step}</p>
+                      <div class="flex gap-4 p-4 bg-gray-50/30 rounded-2xl border border-gray-100/50">
+                        <div class="shrink-0 w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-lg shadow-blue-100">${idx + 1}</div>
+                        <p class="text-gray-700 text-sm leading-relaxed pt-1 font-medium">${step}</p>
                       </div>
                     `).join('')}
                   </div>
                 </div>
 
                 ${recipe.tips && recipe.tips.length > 0 ? `
-                  <div class="bg-amber-50 border border-amber-100 p-6 rounded-xl">
-                    <h3 class="flex items-center gap-2 text-sm font-bold text-amber-700 uppercase tracking-widest mb-4">
-                      <i data-lucide="lightbulb" class="w-4 h-4"></i> I Consigli dello Chef
+                  <div class="bg-orange-50/50 border border-orange-100 p-6 rounded-2xl">
+                    <h3 class="flex items-center gap-2 text-[10px] font-black text-orange-700 uppercase tracking-widest mb-4">
+                      <i data-lucide="lightbulb" class="w-4 h-4"></i> Consigli dello Chef
                     </h3>
                     <ul class="space-y-3">
                       ${recipe.tips.map(tip => `
-                        <li class="flex gap-3 text-amber-800 text-sm">
-                          <span class="text-amber-400">•</span>
+                        <li class="flex gap-3 text-orange-900 text-sm font-medium">
+                          <span class="text-orange-400 font-black">•</span>
                           <span>${tip}</span>
                         </li>
                       `).join('')}

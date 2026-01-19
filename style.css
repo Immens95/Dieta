@@ -1,3 +1,40 @@
+/* Safe Area Support */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+  padding-top: var(--safe-area-inset-top);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Better touch targets */
+button, a, select, input {
+  min-height: 44px;
+}
+
+#sidebar {
+  padding-bottom: var(--safe-area-inset-bottom);
+  height: calc(4rem + var(--safe-area-inset-bottom));
+}
+
+#content {
+  padding-bottom: calc(5rem + var(--safe-area-inset-bottom));
+}
+
+/* Hide scrollbars but keep functionality on mobile */
+@media (max-width: 768px) {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
