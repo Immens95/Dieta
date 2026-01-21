@@ -1,7 +1,7 @@
 export class Store {
   constructor() {
     this.initialized = false;
-    this.version = '1.6.0'; // Increment this to force migration
+    this.version = '1.6.1'; // Increment this to force migration
     this.forceReset = true; // Temporary flag to ensure cleanup
     console.log("Store version:", this.version);
     this.data = {
@@ -107,9 +107,17 @@ export class Store {
     localStorage.setItem(`dieta_${key}`, JSON.stringify(this.data[key]));
     this.notify();
     
-    // Also save to server if running on htdocs/XAMPP
+    // Check if we are on a static host (like GitHub Pages)
+    const isStaticHost = window.location.hostname.includes('github.io') || 
+                        window.location.protocol === 'file:';
+
+    if (isStaticHost) {
+      return; // Skip server save on static environments
+    }
+
+    // Also save to server if running on a PHP-enabled environment (htdocs/XAMPP)
     try {
-      await fetch('./save.php', {
+      const response = await fetch('./save.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -117,8 +125,13 @@ export class Store {
           content: this.data[key]
         })
       });
+
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
     } catch (e) {
-      console.warn('Could not save to server, only local storage updated');
+      // Silently fail for server saves to avoid console noise on unsupported environments
+      // but keep local storage working
     }
   }
 
