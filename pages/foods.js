@@ -17,8 +17,8 @@ export async function FoodsPage() {
       <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer food-row" data-id="${food.id}">
         <td class="px-6 py-4">
           <div class="flex items-center gap-4">
-            <img src="${food.image || 'https://via.placeholder.com/40'}" 
-              onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
+            <img src="${food.image || 'https://placehold.co/40'}" 
+              onerror="this.onerror=null; this.src='https://placehold.co/40?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
               class="w-12 h-12 rounded-xl object-cover shadow-sm">
             <div>
               <div class="font-bold text-gray-900">${food.name}</div>
@@ -62,8 +62,8 @@ export async function FoodsPage() {
   function renderMobileCards(items) {
     return items.map(food => `
       <div class="p-4 flex items-center gap-4 active:bg-gray-50 transition-colors food-row" data-id="${food.id}">
-        <img src="${food.image || 'https://via.placeholder.com/40'}" 
-          onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
+        <img src="${food.image || 'https://placehold.co/40'}" 
+          onerror="this.onerror=null; this.src='https://placehold.co/40?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
           class="w-16 h-16 rounded-2xl object-cover shadow-sm shrink-0">
         <div class="flex-1 min-w-0">
           <div class="flex justify-between items-start mb-1">
@@ -376,7 +376,7 @@ export async function FoodsPage() {
                 
                 <div class="p-2 border border-blue-100 bg-blue-50 rounded-lg text-center">
                   <p class="text-[10px] text-blue-600 font-bold mb-1 uppercase tracking-tighter">Anteprima</p>
-                  <img id="modal-image-preview" src="${selectedImageUrl || 'https://via.placeholder.com/150'}" class="h-28 w-full object-cover rounded-lg mx-auto border border-white shadow-sm">
+                  <img id="modal-image-preview" src="${selectedImageUrl || 'https://placehold.co/150'}" class="h-28 w-full object-cover rounded-lg mx-auto border border-white shadow-sm">
                 </div>
               </div>
             </div>
@@ -453,7 +453,7 @@ export async function FoodsPage() {
 
       urlInput.addEventListener('input', (e) => {
         selectedImageUrl = e.target.value;
-        previewImg.src = selectedImageUrl || 'https://via.placeholder.com/150';
+        previewImg.src = selectedImageUrl || 'https://placehold.co/150';
       });
 
       modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
@@ -502,8 +502,8 @@ export function showFoodDetailModal(food) {
   modal.innerHTML = `
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col animate-scale-in">
       <div class="relative h-64 shrink-0">
-        <img src="${food.image || 'https://via.placeholder.com/400x300'}" 
-          onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
+        <img src="${food.image || 'https://placehold.co/400x300'}" 
+          onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=${encodeURIComponent(food.name.replace(/'/g, ''))}';" 
           class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
         <button id="close-detail" class="absolute top-4 right-4 p-2.5 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full text-white transition-all z-10 active:scale-90">

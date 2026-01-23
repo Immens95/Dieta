@@ -237,7 +237,7 @@ export async function RecipesPage() {
             return `
               <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300 group recipe-card" data-id="${recipe.id}">
                 <div class="h-44 sm:h-52 bg-gray-200 relative overflow-hidden">
-                  <img src="${recipe.image || 'https://via.placeholder.com/400x300'}" 
+                  <img src="${recipe.image || 'https://placehold.co/400x300'}" 
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                   <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   
@@ -448,13 +448,20 @@ export async function RecipesPage() {
                       placeholder="Esempio: 20 min">
                   </div>
                   <div>
-                    <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Difficoltà</label>
-                    <select name="difficulty" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all">
-                      <option value="Facile" ${recipe?.difficulty === 'Facile' ? 'selected' : ''}>Facile</option>
-                      <option value="Media" ${recipe?.difficulty === 'Media' ? 'selected' : ''}>Media</option>
-                      <option value="Difficile" ${recipe?.difficulty === 'Difficile' ? 'selected' : ''}>Difficile</option>
-                    </select>
+                    <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Porzioni</label>
+                    <input type="number" name="servings" value="${recipe?.servings || 1}" 
+                      class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                      placeholder="4">
                   </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Difficoltà</label>
+                  <select name="difficulty" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all">
+                    <option value="Facile" ${recipe?.difficulty === 'Facile' ? 'selected' : ''}>Facile</option>
+                    <option value="Media" ${recipe?.difficulty === 'Media' ? 'selected' : ''}>Media</option>
+                    <option value="Difficile" ${recipe?.difficulty === 'Difficile' ? 'selected' : ''}>Difficile</option>
+                  </select>
                 </div>
 
                 <div>
@@ -485,29 +492,76 @@ export async function RecipesPage() {
                   </div>
                   <div id="ingredients-list" class="space-y-2 max-h-[250px] overflow-y-auto p-1 scrollbar-hide">
                     ${currentIngredients.map((ing, idx) => `
-                      <div class="flex gap-2 items-center bg-gray-50 p-2 rounded-xl border border-gray-100">
-                        <select class="flex-1 bg-transparent border-none focus:ring-0 text-sm font-bold text-gray-700 ing-food" data-idx="${idx}">
-                          ${foods.map(f => `<option value="${f.id}" ${f.id === ing.foodId ? 'selected' : ''}>${f.name}</option>`).join('')}
-                        </select>
-                        <div class="flex items-center gap-1 bg-white px-2 py-1 rounded-lg border border-gray-200">
-                          <input type="number" value="${ing.amount}" 
-                            class="w-14 bg-transparent border-none focus:ring-0 text-sm font-black text-right ing-amount" 
-                            data-idx="${idx}" placeholder="0">
-                          <span class="text-[10px] font-black text-gray-400">G</span>
+                      <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 space-y-2">
+                        <div class="flex gap-2 items-center">
+                          <select class="flex-1 bg-transparent border-none focus:ring-0 text-sm font-bold text-gray-700 ing-food" data-idx="${idx}">
+                            ${foods.map(f => `<option value="${f.id}" ${f.id === ing.foodId ? 'selected' : ''}>${f.name}</option>`).join('')}
+                          </select>
+                          <div class="flex items-center gap-1 bg-white px-2 py-1 rounded-lg border border-gray-200">
+                            <input type="number" value="${ing.amount}" 
+                              class="w-14 bg-transparent border-none focus:ring-0 text-sm font-black text-right ing-amount" 
+                              data-idx="${idx}" placeholder="0">
+                            <span class="text-[10px] font-black text-gray-400">G</span>
+                          </div>
+                          <button type="button" class="p-2 text-red-400 hover:text-red-600 remove-ing" data-idx="${idx}">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                          </button>
                         </div>
-                        <button type="button" class="p-2 text-red-400 hover:text-red-600 remove-ing" data-idx="${idx}">
-                          <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
+                        <input type="text" value="${ing.note || ''}" 
+                          class="w-full bg-white/50 border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] focus:ring-1 focus:ring-blue-500 transition-all ing-note" 
+                          data-idx="${idx}" placeholder="Nota ingrediente (es. 'a temperatura ambiente')">
                       </div>
                     `).join('')}
                   </div>
                 </div>
 
                 <div>
-                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Istruzioni</label>
-                  <textarea name="instructions" rows="4" required 
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Procedimento (un passaggio per riga)</label>
+                  <textarea name="steps" rows="6" required 
                     class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="Descrivi come preparare il piatto...">${recipe?.instructions || ''}</textarea>
+                    placeholder="Descrivi i passaggi, uno per riga...">${(recipe?.steps || [recipe?.instructions || '']).join('\n')}</textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Consigli dello Chef (uno per riga)</label>
+                  <textarea name="tips" rows="2" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Esempio: Usa ingredienti a temperatura ambiente">${(recipe?.tips || []).join('\n')}</textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Varianti (una per riga)</label>
+                  <textarea name="variants" rows="2" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Esempio: Versione vegetariana con tofu">${(recipe?.variants || []).join('\n')}</textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Fonti (una per riga)</label>
+                  <textarea name="sources" rows="2" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Esempio: Accademia Italiana della Cucina">${(recipe?.sources || []).join('\n')}</textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Attrezzatura (separata da virgola)</label>
+                  <input type="text" name="equipment" value="${(recipe?.equipment || []).join(', ')}" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Esempio: Padella, Sbattitore elettrico">
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Dettagli di Servizio</label>
+                  <textarea name="servingSuggestions" rows="2" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Come presentare il piatto...">${recipe?.servingSuggestions || ''}</textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-1.5">Note e Varianti</label>
+                  <textarea name="notes" rows="2" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Consigli extra o varianti...">${recipe?.notes || ''}</textarea>
                 </div>
               </div>
 
@@ -543,7 +597,7 @@ export async function RecipesPage() {
 
                 <div class="p-3 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-4">
                   <div class="w-20 h-20 bg-white rounded-xl overflow-hidden border border-blue-200 shrink-0">
-                    <img id="modal-image-preview" src="${selectedImageUrl || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover">
+                    <img id="modal-image-preview" src="${selectedImageUrl || 'https://placehold.co/150'}" class="w-full h-full object-cover">
                   </div>
                   <div class="flex-1">
                     <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Anteprima</p>
@@ -640,7 +694,7 @@ export async function RecipesPage() {
 
       urlInput.addEventListener('input', (e) => {
         selectedImageUrl = e.target.value;
-        previewImg.src = selectedImageUrl || 'https://via.placeholder.com/150';
+        previewImg.src = selectedImageUrl || 'https://placehold.co/150';
       });
 
       modal.querySelector('#close-modal').addEventListener('click', () => modal.remove());
@@ -674,20 +728,35 @@ export async function RecipesPage() {
         });
       });
 
+      modal.querySelectorAll('.ing-note').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const idx = parseInt(inp.getAttribute('data-idx'));
+          currentIngredients[idx].note = e.target.value;
+        });
+      });
+
       modal.querySelector('#recipe-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const mealCategories = formData.getAll('mealCategories');
         const data = {
           name: formData.get('name'),
-          instructions: formData.get('instructions'),
+          steps: formData.get('steps').split('\n').map(s => s.trim()).filter(Boolean),
+          instructions: formData.get('steps'), // Keep for compatibility
           origin: formData.get('origin'),
           prepTime: formData.get('prepTime'),
+          servings: Number(formData.get('servings')),
           difficulty: formData.get('difficulty'),
           tags: formData.get('tags').split(',').map(t => t.trim()).filter(Boolean),
           ingredients: currentIngredients,
           image: selectedImageUrl,
           mealCategories: mealCategories,
+          sources: formData.get('sources').split('\n').map(s => s.trim()).filter(Boolean),
+          equipment: formData.get('equipment').split(',').map(e => e.trim()).filter(Boolean),
+          tips: formData.get('tips').split('\n').map(s => s.trim()).filter(Boolean),
+          variants: formData.get('variants').split('\n').map(s => s.trim()).filter(Boolean),
+          servingSuggestions: formData.get('servingSuggestions'),
+          notes: formData.get('notes'),
           totals: calculateTotals(currentIngredients)
         };
 
@@ -777,7 +846,7 @@ export function showRecipeDetailModal(recipe, foods, targetCals = null) {
       <div class="bg-white rounded-none sm:rounded-2xl shadow-2xl w-full max-w-4xl h-full sm:h-auto max-h-screen sm:max-h-[90vh] overflow-hidden flex flex-col animate-scale-in">
         <div class="flex-1 overflow-y-auto scrollbar-hide pb-20 sm:pb-0">
           <div class="relative h-56 sm:h-80 shrink-0">
-            <img src="${recipe.image || 'https://via.placeholder.com/800x600'}" class="w-full h-full object-cover">
+            <img src="${recipe.image || 'https://placehold.co/800x600'}" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
             <button id="close-detail" class="absolute top-4 right-4 p-2.5 bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full text-white transition-all z-10 active:scale-90">
               <i data-lucide="x" class="w-5 h-5 sm:w-6 sm:h-6"></i>
@@ -823,13 +892,36 @@ export function showRecipeDetailModal(recipe, foods, targetCals = null) {
                       const food = foods.find(f => f.id === ing.foodId);
                       return `
                         <li class="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl border border-gray-100 transition-colors hover:bg-gray-50">
-                          <span class="text-sm font-bold text-gray-700">${food?.name || 'Ingrediente'}</span>
+                          <div class="flex flex-col">
+                            <span class="text-sm font-bold text-gray-700">${food?.name || 'Ingrediente'}</span>
+                            ${ing.note ? `<span class="text-[10px] text-gray-400 italic">${ing.note}</span>` : ''}
+                          </div>
                           <span class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">${ing.amount}g</span>
                         </li>
                       `;
                     }).join('')}
                   </ul>
                 </div>
+
+                ${recipe.servings ? `
+                  <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
+                    <h3 class="text-[10px] font-black text-blue-700 uppercase tracking-widest mb-2 flex items-center gap-2">
+                      <i data-lucide="users" class="w-3 h-3"></i> Porzioni
+                    </h3>
+                    <p class="text-sm font-bold text-blue-900">${recipe.servings} persone</p>
+                  </div>
+                ` : ''}
+
+                ${recipe.sources ? `
+                  <div class="bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                      <i data-lucide="link" class="w-3 h-3"></i> Fonti
+                    </h3>
+                    <ul class="space-y-1">
+                      ${recipe.sources.map(src => `<li class="text-[11px] text-gray-600 font-medium">• ${src}</li>`).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
 
                 <div class="bg-gray-900 p-6 rounded-2xl shadow-xl space-y-5">
                   <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Macro-nutrienti</h3>
@@ -885,6 +977,52 @@ export function showRecipeDetailModal(recipe, foods, targetCals = null) {
                           <span class="text-orange-400 font-black">•</span>
                           <span>${tip}</span>
                         </li>
+                      `).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
+
+                ${recipe.servingSuggestions ? `
+                  <div class="bg-green-50/50 border border-green-100 p-6 rounded-2xl">
+                    <h3 class="flex items-center gap-2 text-[10px] font-black text-green-700 uppercase tracking-widest mb-4">
+                      <i data-lucide="utensils" class="w-4 h-4"></i> Dettagli di Servizio
+                    </h3>
+                    <p class="text-green-900 text-sm font-medium leading-relaxed">${recipe.servingSuggestions}</p>
+                  </div>
+                ` : ''}
+
+                ${recipe.notes || (recipe.variants && recipe.variants.length > 0) ? `
+                  <div class="bg-blue-50/50 border border-blue-100 p-6 rounded-2xl">
+                    <h3 class="flex items-center gap-2 text-[10px] font-black text-blue-700 uppercase tracking-widest mb-4">
+                      <i data-lucide="info" class="w-4 h-4"></i> Note e Varianti
+                    </h3>
+                    <div class="space-y-4">
+                      ${recipe.notes ? `
+                        <div>
+                          <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Note</p>
+                          <p class="text-blue-900 text-sm font-medium leading-relaxed">${recipe.notes}</p>
+                        </div>
+                      ` : ''}
+                      ${recipe.variants && recipe.variants.length > 0 ? `
+                        <div>
+                          <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Varianti</p>
+                          <ul class="space-y-1">
+                            ${recipe.variants.map(v => `<li class="text-blue-900 text-sm font-medium">• ${v}</li>`).join('')}
+                          </ul>
+                        </div>
+                      ` : ''}
+                    </div>
+                  </div>
+                ` : ''}
+
+                ${recipe.equipment && recipe.equipment.length > 0 ? `
+                  <div class="bg-gray-50/50 border border-gray-100 p-6 rounded-2xl">
+                    <h3 class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">
+                      <i data-lucide="tool" class="w-4 h-4"></i> Attrezzatura Necessaria
+                    </h3>
+                    <ul class="flex flex-wrap gap-2">
+                      ${recipe.equipment.map(item => `
+                        <li class="bg-white border border-gray-100 px-3 py-1.5 rounded-lg text-xs font-bold text-gray-600 shadow-sm">${item}</li>
                       `).join('')}
                     </ul>
                   </div>

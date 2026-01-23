@@ -663,7 +663,29 @@ export async function PlansPage() {
     }
 
     if (candidates.length === 0) candidates = suitableRecipes;
-    const picked = candidates[Math.floor(Math.random() * candidates.length)];
+
+    // Score candidates and pick best ones
+    const scoredCandidates = candidates.map(r => {
+      let score = 1; // Base score
+      const tags = r.tags || [];
+      const conditions = (user.healthConditions || []).map(c => c.toLowerCase());
+      
+      if (conditions.includes('artrite') || conditions.includes('sclerosi multipla') || conditions.includes('endometriosi')) {
+        if (tags.includes('anti-inflammatory')) score += 5;
+        if (tags.includes('omega-3')) score += 3;
+      }
+      
+      if (conditions.includes('reflusso') || conditions.includes('reflux')) {
+        if (tags.includes('low-acid')) score += 5;
+      }
+
+      // Prioritize authentic/new recipes slightly
+      if (r.id === '5' || r.id === '6') score += 2;
+
+      return { recipe: r, score: score * Math.random() }; // Add randomness
+    }).sort((a, b) => b.score - a.score);
+
+    const picked = scoredCandidates[0].recipe;
     
     if (!plan.days[day]) plan.days[day] = {};
     plan.days[day][meal] = [picked.id];

@@ -1,7 +1,7 @@
 export class Store {
   constructor() {
     this.initialized = false;
-    this.version = '1.6.1'; // Increment this to force migration
+    this.version = '1.8.0'; // Increment this to force migration
     this.forceReset = true; // Temporary flag to ensure cleanup
     console.log("Store version:", this.version);
     this.data = {

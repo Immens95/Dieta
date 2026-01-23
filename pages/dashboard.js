@@ -1,4 +1,5 @@
 import { store } from '../utils/store.js';
+import { showRecipeDetailModal } from './recipes.js';
 
 export async function DashboardPage() {
   await store.ensureInitialized();
@@ -6,6 +7,8 @@ export async function DashboardPage() {
   container.className = 'space-y-8 animate-fade-in';
 
   let allUsers = store.getAll('users') || [];
+  let allRecipes = store.getAll('recipes') || [];
+  let allFoods = store.getAll('foods') || [];
   let selectedUserIds = [allUsers[0]?.id].filter(Boolean); // Start with the first user if available
 
   function calculateUserStats(user) {
@@ -140,6 +143,41 @@ export async function DashboardPage() {
     });
 
     return recommendations;
+  }
+
+  function getRecipeRecommendations(user) {
+    const conditions = (user.healthConditions || []).map(c => c.toLowerCase());
+    const intolerances = (user.intolerances || []).map(i => i.toLowerCase());
+
+    return allRecipes.filter(r => {
+      // Basic filtering (intolerances)
+      if ((intolerances.includes('gluten') || intolerances.includes('glutine')) && !r.tags?.includes('gluten-free')) return false;
+      if ((intolerances.includes('lactose') || intolerances.includes('lattosio')) && !r.tags?.includes('lactose-free')) return false;
+      
+      // Health condition filtering
+      if ((conditions.includes('reflux') || conditions.includes('reflusso')) && !r.tags?.includes('low-acid')) return false;
+      if (conditions.includes('ibs') && !r.tags?.includes('low-fodmap') && !r.tags?.includes('gluten-free')) return false;
+      
+      return true;
+    }).map(r => {
+      // Calculate a score for ranking
+      let score = 0;
+      const tags = r.tags || [];
+      
+      if (conditions.includes('artrite') || conditions.includes('sclerosi multipla') || conditions.includes('endometriosi')) {
+        if (tags.includes('anti-inflammatory')) score += 3;
+        if (tags.includes('omega-3')) score += 2;
+      }
+      
+      if (conditions.includes('reflusso') || conditions.includes('reflux')) {
+        if (tags.includes('low-acid')) score += 3;
+      }
+      
+      // Bonus for authentic/new recipes
+      if (r.id === '5' || r.id === '6') score += 1; 
+
+      return { ...r, score };
+    }).sort((a, b) => b.score - a.score).slice(0, 3);
   }
 
   let timeframe = 'daily';
@@ -500,6 +538,27 @@ export async function DashboardPage() {
                   </div>
                 </div>
 
+                <!-- Recommended Recipes -->
+                <div>
+                  <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Ricette Consigliate</h4>
+                  <div class="grid grid-cols-1 gap-3">
+                    ${getRecipeRecommendations(user).map(r => `
+                      <div class="group bg-white p-3 rounded-xl border border-gray-100 hover:border-blue-200 hover:shadow-sm transition-all cursor-pointer recipe-card-mini active:scale-95" data-recipe-id="${r.id}" data-user-id="${user.id}">
+                        <div class="flex justify-between items-start">
+                          <div>
+                            <p class="text-sm font-black text-gray-800 leading-tight">${r.name}</p>
+                            <div class="flex items-center gap-2 mt-1">
+                              <span class="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded uppercase tracking-tighter">${r.tags?.[0] || 'Bilanciato'}</span>
+                              <span class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">${r.prepTime || '20 min'}</span>
+                            </div>
+                          </div>
+                          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                        </div>
+                      </div>
+                    `).join('') || '<p class="text-xs text-gray-400 py-4 text-center border-2 border-dashed border-gray-50 rounded-xl">Nessuna ricetta consigliata</p>'}
+                  </div>
+                </div>
+
                 <!-- Progress Bar -->
                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
                   <div class="flex justify-between items-end mb-4">
@@ -621,7 +680,29 @@ export async function DashboardPage() {
       const targetBtn = e.target.closest('.open-targets');
       const weightChart = e.target.closest('.weight-chart-container');
       const userHeader = e.target.closest('.user-card-header');
+      const recipeCard = e.target.closest('.recipe-card-mini');
       
+      if (recipeCard) {
+        const recipeId = recipeCard.getAttribute('data-recipe-id');
+        const userId = recipeCard.getAttribute('data-user-id');
+        const recipe = allRecipes.find(r => r.id === recipeId);
+        const user = allUsers.find(u => u.id === userId);
+        
+        if (recipe && user) {
+          // Calculate target calories for this specific user to scale the recipe
+          const bmr = user.sex === 'male'
+            ? 10 * user.weight + 6.25 * user.height - 5 * user.age + 5
+            : 10 * user.weight + 6.25 * user.height - 5 * user.age - 161;
+          const multipliers = { sedentary: 1.2, light: 1.375, medium: 1.55, active: 1.725 };
+          const tdee = Math.round(bmr * (multipliers[user.activityLevel] || 1.2));
+          
+          // Assuming a lunch/dinner size for recommendation scaling
+          const targetCals = tdee * 0.35; 
+          
+          showRecipeDetailModal(recipe, allFoods, targetCals);
+        }
+      }
+
       if (targetBtn) {
         const id = targetBtn.getAttribute('data-id');
         const user = allUsers.find(u => u.id === id);
