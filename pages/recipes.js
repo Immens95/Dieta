@@ -1,5 +1,6 @@
 import { store } from '../utils/store.js';
 import { recipeImages, getUnsplashUrl, searchUnsplashImages } from '../utils/imageGallery.js';
+import { showFoodDetailModal } from './foods.js';
 
 function getOriginFlag(origin) {
   const flags = {
@@ -887,20 +888,20 @@ export function showRecipeDetailModal(recipe, foods, targetCals = null) {
                   <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                     <i data-lucide="shopping-basket" class="w-4 h-4"></i> Ingredienti
                   </h3>
-                  <ul class="space-y-2">
-                    ${displayIngredients.map(ing => {
-                      const food = foods.find(f => f.id === ing.foodId);
-                      return `
-                        <li class="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl border border-gray-100 transition-colors hover:bg-gray-50">
-                          <div class="flex flex-col">
-                            <span class="text-sm font-bold text-gray-700">${food?.name || 'Ingrediente'}</span>
-                            ${ing.note ? `<span class="text-[10px] text-gray-400 italic">${ing.note}</span>` : ''}
-                          </div>
-                          <span class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">${ing.amount}g</span>
-                        </li>
-                      `;
-                    }).join('')}
-                  </ul>
+                <ul class="space-y-2">
+                  ${displayIngredients.map(ing => {
+                    const food = foods.find(f => f.id === ing.foodId);
+                    return `
+                      <li class="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl border border-gray-100 transition-colors hover:bg-blue-50 cursor-pointer ingredient-item" data-food-id="${ing.foodId}">
+                        <div class="flex flex-col">
+                          <span class="text-sm font-bold text-gray-700">${food?.name || 'Ingrediente'}</span>
+                          ${ing.note ? `<span class="text-[10px] text-gray-400 italic">${ing.note}</span>` : ''}
+                        </div>
+                        <span class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">${ing.amount}g</span>
+                      </li>
+                    `;
+                  }).join('')}
+                </ul>
                 </div>
 
                 ${recipe.servings ? `
@@ -1045,6 +1046,16 @@ export function showRecipeDetailModal(recipe, foods, targetCals = null) {
     modal.querySelector('#close-detail').addEventListener('click', () => {
       modal.classList.add('animate-scale-out');
       setTimeout(() => modal.remove(), 200);
+    });
+
+    modal.querySelectorAll('.ingredient-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const foodId = item.getAttribute('data-food-id');
+        const food = foods.find(f => f.id === foodId);
+        if (food) {
+          showFoodDetailModal(food);
+        }
+      });
     });
 
     modal.addEventListener('click', (e) => {
