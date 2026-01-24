@@ -957,12 +957,17 @@ export function showRecipeDetailModal(recipe, foods, targetCals = null) {
                     <i data-lucide="chef-hat" class="w-4 h-4"></i> Preparazione
                   </h3>
                   <div class="space-y-4">
-                    ${(recipe.steps || [recipe.instructions]).map((step, idx) => `
-                      <div class="flex gap-4 p-4 bg-gray-50/30 rounded-2xl border border-gray-100/50">
-                        <div class="shrink-0 w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-lg shadow-blue-100">${idx + 1}</div>
-                        <p class="text-gray-700 text-sm leading-relaxed pt-1 font-medium">${step}</p>
-                      </div>
-                    `).join('')}
+                    ${(recipe.steps || [recipe.instructions]).map((step, idx) => {
+                      const stepText = typeof step === 'object' 
+                        ? `<strong class="block text-gray-900 mb-1">${step.title}</strong>${step.description}`
+                        : step;
+                      return `
+                        <div class="flex gap-4 p-4 bg-gray-50/30 rounded-2xl border border-gray-100/50">
+                          <div class="shrink-0 w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-lg shadow-blue-100">${idx + 1}</div>
+                          <p class="text-gray-700 text-sm leading-relaxed pt-1 font-medium">${stepText}</p>
+                        </div>
+                      `;
+                    }).join('')}
                   </div>
                 </div>
 
