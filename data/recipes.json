@@ -8677,5 +8677,577 @@
             "lactose-free"
         ],
         "image": "https:\/\/loremflickr.com\/800\/600\/food,cooked,tortellini?lock=135"
+    },
+    {
+        "id": "136",
+        "name": "Arrosticini Abruzzesi",
+        "origin": "Abruzzo",
+        "sources": ["Tradizione Abruzzese", "GialloZafferano"],
+        "difficulty": "Facile",
+        "prepTime": "30 min",
+        "mealCategories": ["Cena", "Secondo"],
+        "ingredients": [
+            { "foodId": "1285", "amount": 800, "note": "Carne di pecora tagliata a cubetti piccoli" },
+            { "foodId": "1016", "amount": 10, "note": "Sale fino" }
+        ],
+        "steps": [
+            { "title": "Preparazione", "description": "Infilzare i cubetti di carne di pecora negli spiedini di legno (circa 20-30g per spiedino)." },
+            { "title": "Cottura", "description": "Cuocere sulla 'fornacella' (brace di carbone) girandoli su tutti i lati finché non sono dorati e il grasso si scioglie leggermente." },
+            { "title": "Salatura", "description": "Salare solo a fine cottura." }
+        ],
+        "serving": "4 persone. Accompagnare con pane casereccio 'sciapo' irrorato di olio EVO.",
+        "tags": ["gluten-free", "lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,skewers?lock=136"
+    },
+    {
+        "id": "137",
+        "name": "Orecchiette alle Cime di Rapa",
+        "origin": "Puglia",
+        "sources": ["Cucina Pugliese", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "40 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "3876", "amount": 400, "note": "Orecchiette fresche" },
+            { "foodId": "3890", "amount": 1000, "note": "Cime di rapa pulite" },
+            { "foodId": "3745", "amount": 4, "note": "Filetti di acciughe" },
+            { "foodId": "1018", "amount": 2, "note": "Spicchi d'aglio" }
+        ],
+        "steps": [
+            { "title": "Cottura verdura", "description": "Lessare le cime di rapa in abbondante acqua salata." },
+            { "title": "Pasta", "description": "A metà cottura della verdura, buttare le orecchiette nella stessa pentola." },
+            { "title": "Soffritto", "description": "In una padella, soffriggere aglio e acciughe finché queste non si sciolgono. Aggiungere peperoncino se gradito." },
+            { "title": "Mantecatura", "description": "Scolare pasta e verdura e saltarle in padella con il soffritto." }
+        ],
+        "serving": "4 persone. Il piatto simbolo della Puglia.",
+        "tags": ["lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,orecchiette?lock=137"
+    },
+    {
+        "id": "138",
+        "name": "Pasta e Patate con Provola",
+        "origin": "Campania (Napoli)",
+        "sources": ["Cucina Napoletana", "Luciano Pignataro"],
+        "difficulty": "Media",
+        "prepTime": "50 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "1284", "amount": 320, "note": "Pasta mista o fusilli" },
+            { "foodId": "1247", "amount": 600, "note": "Patate a cubetti" },
+            { "foodId": "4596", "amount": 200, "note": "Provola affumicata" },
+            { "foodId": "1002", "amount": 50, "note": "Parmigiano o scorza di Parmigiano pulita" }
+        ],
+        "steps": [
+            { "title": "Base", "description": "Soffriggere sedano, carota e cipolla. Aggiungere le patate e coprire con acqua." },
+            { "title": "Cottura", "description": "Quando le patate iniziano a sfaldarsi, calare la pasta direttamente nella pentola con le patate." },
+            { "title": "Mantecatura", "description": "A fuoco spento, aggiungere la provola a cubetti e il parmigiano. Mescolare energicamente finché non diventa 'azzeccata' (cremosa)." }
+        ],
+        "serving": "4 persone. La crosticina sul fondo è la parte migliore.",
+        "tags": ["vegetarian"],
+        "image": "https://loremflickr.com/800/600/food,cooked,pasta,potatoes?lock=138"
+    },
+    {
+        "id": "139",
+        "name": "Trofie al Pesto Genovese",
+        "origin": "Liguria",
+        "sources": ["Consorzio del Pesto Genovese", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "20 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "4508", "amount": 400, "note": "Trofie fresche" },
+            { "foodId": "3163", "amount": 50, "note": "Foglie di basilico genovese DOP" },
+            { "foodId": "3181", "amount": 15, "note": "Pinoli" },
+            { "foodId": "1002", "amount": 50, "note": "Parmigiano e Pecorino sardo" },
+            { "foodId": "1018", "amount": 1, "note": "Aglio di Vessalico" }
+        ],
+        "steps": [
+            { "title": "Pesto", "description": "Pestare l'aglio con i pinoli. Aggiungere il basilico con un pizzico di sale e pestare con movimenti rotatori. Unire i formaggi e l'olio EVO." },
+            { "title": "Cottura", "description": "Cuocere le trofie in acqua salata. Tradizionalmente si aggiungono anche fagiolini e patate a cubetti nell'acqua della pasta." },
+            { "title": "Mantecatura", "description": "Diluire il pesto con un cucchiaio di acqua di cottura e condire le trofie a freddo." }
+        ],
+        "serving": "4 persone. Non scaldare mai il pesto in padella.",
+        "tags": ["vegetarian"],
+        "image": "https://loremflickr.com/800/600/food,cooked,pesto,pasta?lock=139"
+    },
+    {
+        "id": "140",
+        "name": "Farinata di Ceci",
+        "origin": "Liguria",
+        "sources": ["Cucina Ligure Tradizionale", "Il Cucchiaio d'Argento"],
+        "difficulty": "Media",
+        "prepTime": "240 min",
+        "mealCategories": ["Pranzo", "Cena", "Snack"],
+        "ingredients": [
+            { "foodId": "1282", "amount": 300, "note": "Farina di ceci" },
+            { "foodId": "1016", "amount": 10, "note": "Sale" },
+            { "foodId": "1010", "amount": 900, "note": "Acqua" }
+        ],
+        "steps": [
+            { "title": "Riposo", "description": "Sciogliere la farina di ceci nell'acqua evitando grumi. Lasciar riposare per almeno 4 ore (meglio 10), schiumando di tanto in tanto." },
+            { "title": "Preparazione", "description": "Aggiungere sale e olio all'impasto. Versare in una teglia di rame stagnato (testo) ben oliata." },
+            { "title": "Cottura", "description": "Infornare alla massima temperatura (meglio forno a legna) finché non si forma una crosticina dorata e croccante in superficie." }
+        ],
+        "serving": "6 persone. Servire caldissima con una spolverata di pepe nero.",
+        "tags": ["vegan", "gluten-free", "lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,chickpea,flatbread?lock=140"
+    },
+    {
+        "id": "141",
+        "name": "Pasta alla Norma",
+        "origin": "Sicilia (Catania)",
+        "sources": ["Cucina Siciliana", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "45 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "2984", "amount": 400, "note": "Spaghetti o Maccheroni" },
+            { "foodId": "5", "amount": 2, "note": "Melanzane nere" },
+            { "foodId": "1001", "amount": 500, "note": "Pomodori pelati" },
+            { "foodId": "1002", "amount": 100, "note": "Ricotta salata da grattugiare" }
+        ],
+        "steps": [
+            { "title": "Melanzane", "description": "Tagliare le melanzane a cubetti o fette, salarle per far perdere l'amaro e friggerle in olio EVO." },
+            { "title": "Sugo", "description": "Preparare un sugo semplice di pomodoro con aglio e basilico." },
+            { "title": "Mantecatura", "description": "Condire la pasta con il sugo, aggiungere le melanzane fritte e un'abbondante pioggia di ricotta salata e basilico fresco." }
+        ],
+        "serving": "4 persone. Dedicata all'opera di Vincenzo Bellini.",
+        "tags": ["vegetarian"],
+        "image": "https://loremflickr.com/800/600/food,cooked,pasta,norma?lock=141"
+    },
+    {
+        "id": "142",
+        "name": "Bagna Cauda",
+        "origin": "Piemonte",
+        "sources": ["Cucina Piemontese", "Slow Food"],
+        "difficulty": "Media",
+        "prepTime": "60 min",
+        "mealCategories": ["Cena", "Antipasto"],
+        "ingredients": [
+            { "foodId": "1018", "amount": 12, "note": "Teste d'aglio" },
+            { "foodId": "3745", "amount": 300, "note": "Acciughe sotto sale pulite" },
+            { "foodId": "1003", "amount": 50, "note": "Burro" },
+            { "foodId": "1010", "amount": 500, "note": "Olio EVO" }
+        ],
+        "steps": [
+            { "title": "Aglio", "description": "Affettare l'aglio e cuocerlo nel latte (opzionale per renderlo più digeribile) o direttamente nell'olio a fuoco bassissimo." },
+            { "title": "Acciughe", "description": "Aggiungere le acciughe e farle sciogliere lentamente, mescolando continuamente. Non deve mai friggere." },
+            { "title": "Finitura", "description": "Unire il burro per rendere la salsa più vellutata." }
+        ],
+        "serving": "6 persone. Servire nel 'fojot' con verdure crude (cardo gobbo, topinambur, peperoni) e cotte.",
+        "tags": ["gluten-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,dip,anchovy?lock=142"
+    },
+    {
+        "id": "143",
+        "name": "Focaccia di Recco",
+        "origin": "Liguria (Recco)",
+        "sources": ["Consorzio Focaccia di Recco", "GialloZafferano"],
+        "difficulty": "Difficile",
+        "prepTime": "90 min",
+        "mealCategories": ["Pranzo", "Cena", "Snack"],
+        "ingredients": [
+            { "foodId": "1014", "amount": 500, "note": "Farina di forza (Manitoba)" },
+            { "foodId": "1262", "amount": 1000, "note": "Crescenza o Stracchino di qualità" },
+            { "foodId": "1010", "amount": 50, "note": "Olio EVO" }
+        ],
+        "steps": [
+            { "title": "Impasto", "description": "Impastare farina, acqua, olio e sale finché non è elastico. Far riposare 30 min." },
+            { "title": "Sfoglia", "description": "Tirare due sfoglie sottilissime, quasi trasparenti." },
+            { "title": "Farcitura", "description": "Adagiare la prima sfoglia sulla teglia, distribuire ciuffetti di formaggio e coprire con la seconda sfoglia. Pizzicare la superficie per creare dei buchi." },
+            { "title": "Cottura", "description": "Infornare a 250-300°C per pochi minuti finché non è dorata con macchie scure." }
+        ],
+        "serving": "6-8 persone. Prodotto IGP unico al mondo.",
+        "tags": ["vegetarian"],
+        "image": "https://loremflickr.com/800/600/food,cooked,focaccia,recco?lock=143"
+    },
+    {
+        "id": "144",
+        "name": "Filetto di Baccalà fritto",
+        "origin": "Lazio (Roma)",
+        "sources": ["Cucina Romana Tradizionale", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "40 min",
+        "mealCategories": ["Cena", "Antipasto"],
+        "ingredients": [
+            { "foodId": "349", "amount": 600, "note": "Baccalà già dissalato" },
+            { "foodId": "1014", "amount": 200, "note": "Farina 00" },
+            { "foodId": "1010", "amount": 1000, "note": "Olio per friggere" }
+        ],
+        "steps": [
+            { "title": "Pastella", "description": "Preparare una pastella con farina e acqua gassata freddissima (o birra). Deve essere fluida ma densa." },
+            { "title": "Baccalà", "description": "Tagliare il baccalà a filetti lunghi, asciugarli bene." },
+            { "title": "Frittura", "description": "Immergere i filetti nella pastella e friggerli in abbondante olio bollente finché non sono gonfi e dorati." }
+        ],
+        "serving": "4 persone. Piatto tipico della vigilia di Natale a Roma.",
+        "tags": ["lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,cod,fried?lock=144"
+    },
+    {
+        "id": "145",
+        "name": "Spaghetti all'Assassina",
+        "origin": "Puglia (Bari)",
+        "sources": ["Accademia dell'Assassina", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "30 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "2984", "amount": 400, "note": "Spaghetti" },
+            { "foodId": "1001", "amount": 300, "note": "Passata di pomodoro" },
+            { "foodId": "1010", "amount": 100, "note": "Olio EVO" },
+            { "foodId": "1016", "amount": 10, "note": "Peperoncino secco tritato" }
+        ],
+        "steps": [
+            { "title": "Soffritto", "description": "In una padella di ferro, soffriggere aglio, olio e abbondante peperoncino." },
+            { "title": "Risottatura", "description": "Mettere gli spaghetti crudi in padella e farli tostare finché non diventano scuri. Aggiungere la passata di pomodoro diluita con acqua calda un mestolo alla volta." },
+            { "title": "Bruciatura", "description": "Far asciugare il sugo finché la pasta non 'sfrigola' e crea una crosticina bruciata e croccante. Ripetere finché la pasta è cotta." }
+        ],
+        "serving": "4 persone. Deve essere piccantissima e croccante.",
+        "tags": ["vegan", "lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,spaghetti,spicy?lock=145"
+    },
+    {
+        "id": "146",
+        "name": "Pasta alla Gricia",
+        "origin": "Lazio",
+        "sources": ["Cucina Romana", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "20 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "2998", "amount": 400, "note": "Rigatoni" },
+            { "foodId": "2799", "amount": 200, "note": "Guanciale" },
+            { "foodId": "2814", "amount": 60, "note": "Pecorino Romano DOP" }
+        ],
+        "steps": [
+            { "title": "Guanciale", "description": "Tagliare il guanciale a listarelle e farlo sudare in padella finché non diventa croccante e il grasso è trasparente." },
+            { "title": "Pasta", "description": "Cuocere la pasta al dente. Conservare un po' di acqua di cottura." },
+            { "title": "Mantecatura", "description": "Saltare la pasta con il guanciale, aggiungere pecorino e acqua di cottura per creare una crema densa (senza uovo!)." }
+        ],
+        "serving": "4 persone. L'antenata della Carbonara e dell'Amatriciana.",
+        "tags": ["lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,pasta,gricia?lock=146"
+    },
+    {
+        "id": "147",
+        "name": "Seadas",
+        "origin": "Sardegna",
+        "sources": ["Cucina Sarda Tradizionale", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "60 min",
+        "mealCategories": ["Dessert"],
+        "ingredients": [
+            { "foodId": "1014", "amount": 300, "note": "Semola di grano duro" },
+            { "foodId": "1002", "amount": 300, "note": "Pecorino sardo freschissimo (acidulo)" },
+            { "foodId": "4787", "amount": 100, "note": "Miele di corbezzolo o castagno" },
+            { "foodId": "1104", "amount": 1, "note": "Scorza di limone o arancia" }
+        ],
+        "steps": [
+            { "title": "Ripieno", "description": "Sciogliere il formaggio in un pentolino con un po' d'acqua e la scorza grattugiata. Formare dei dischi e lasciar raffreddare." },
+            { "title": "Pasta", "description": "Impastare semola, acqua e strutto (o olio). Tirare una sfoglia sottile." },
+            { "title": "Confezionamento", "description": "Mettere il disco di formaggio tra due strati di pasta, chiudere bene e ritagliare con una rotella." },
+            { "title": "Cottura", "description": "Friggere in abbondante olio EVO e servire caldissima ricoperta di miele fuso." }
+        ],
+        "serving": "6 persone. Il dolce più famoso della Sardegna.",
+        "tags": ["vegetarian"],
+        "image": "https://loremflickr.com/800/600/food,cooked,seadas?lock=147"
+    },
+    {
+        "id": "148",
+        "name": "Canederli allo Speck",
+        "origin": "Trentino-Alto Adige",
+        "sources": ["Cucina Tirolese", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "60 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "1006", "amount": 300, "note": "Pane raffermo a cubetti" },
+            { "foodId": "420", "amount": 150, "note": "Speck dell'Alto Adige" },
+            { "foodId": "1118", "amount": 250, "note": "Latte intero" },
+            { "foodId": "63", "amount": 2, "note": "Uova" }
+        ],
+        "steps": [
+            { "title": "Impasto", "description": "Ammollare il pane nel latte e uova. Aggiungere lo speck a cubetti, erba cipollina e un po' di farina se necessario." },
+            { "title": "Formatura", "description": "Formare delle palle grandi come un'albicocca comprimendo bene con le mani." },
+            { "title": "Cottura", "description": "Cuocere in brodo di carne bollente per 15 minuti finché non vengono a galla." }
+        ],
+        "serving": "4 persone. Servire in brodo o asciutti con burro fuso e salvia.",
+        "tags": [],
+        "image": "https://loremflickr.com/800/600/food,cooked,dumplings?lock=148"
+    },
+    {
+        "id": "149",
+        "name": "Pasta con le Sarde",
+        "origin": "Sicilia (Palermo)",
+        "sources": ["Cucina Siciliana", "Il Cucchiaio d'Argento"],
+        "difficulty": "Media",
+        "prepTime": "60 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "1260", "amount": 500, "note": "Sarde fresche pulite" },
+            { "foodId": "4671", "amount": 500, "note": "Finocchietto selvatico" },
+            { "foodId": "1023", "amount": 50, "note": "Pinoli e uva passa" },
+            { "foodId": "1015", "amount": 1, "note": "Zafferano" },
+            { "foodId": "2984", "amount": 400, "note": "Bucatini" }
+        ],
+        "steps": [
+            { "title": "Verdura", "description": "Lessare il finocchietto in acqua salata, scolarlo e tritarlo. Conservare l'acqua per la pasta." },
+            { "title": "Sugo", "description": "Soffriggere cipolla e acciughe, aggiungere pinoli, uvetta, finocchietto e zafferano. Unire le sarde e cuocere per 10 minuti." },
+            { "title": "Mantecatura", "description": "Cuocere i bucatini nell'acqua del finocchietto, scolarli e saltarli nel sugo di sarde." }
+        ],
+        "serving": "4 persone. Un piatto arabo-siculo dai sapori incredibili.",
+        "tags": ["lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,pasta,sardines?lock=149"
+    },
+    {
+        "id": "150",
+        "name": "Frico con Patate",
+        "origin": "Friuli-Venezia Giulia",
+        "sources": ["Cucina Friulana", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "45 min",
+        "mealCategories": ["Cena", "Secondo"],
+        "ingredients": [
+            { "foodId": "4745", "amount": 500, "note": "Formaggio Montasio stagionato" },
+            { "foodId": "1247", "amount": 500, "note": "Patate" },
+            { "foodId": "1017", "amount": 1, "note": "Cipolla bianca" }
+        ],
+        "steps": [
+            { "title": "Patate", "description": "Grattugiare le patate e la cipolla. Cuocerle in padella con un filo d'olio finché non sono tenere." },
+            { "title": "Formaggio", "description": "Aggiungere il Montasio a cubetti o grattugiato grosso." },
+            { "title": "Cottura", "description": "Mescolare finché il formaggio non si scioglie, poi lasciar formare una crosticina dorata da un lato. Girare come una frittata e dorare l'altro lato." }
+        ],
+        "serving": "4 persone. Accompagnare obbligatoriamente con polenta.",
+        "tags": ["gluten-free", "vegetarian"],
+        "image": "https://loremflickr.com/800/600/food,cooked,cheese,frico?lock=150"
+    },
+    {
+        "id": "151",
+        "name": "Risi e Bisi",
+        "origin": "Veneto",
+        "sources": ["Cucina Veneziana", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "40 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "1897", "amount": 400, "note": "Piselli freschi con i baccelli" },
+            { "foodId": "5029", "amount": 320, "note": "Riso Arborio o Vialone Nano" },
+            { "foodId": "1004", "amount": 50, "note": "Pancetta tesa" },
+            { "foodId": "1017", "amount": 1, "note": "Cipolla piccola" }
+        ],
+        "steps": [
+            { "title": "Brodo", "description": "Sgranare i piselli. Far bollire i baccelli puliti in acqua salata per 30 minuti, poi frullarli e filtrarli per ottenere un brodo verde e saporito." },
+            { "title": "Soffritto", "description": "Rosolare cipolla e pancetta tritata in olio e burro. Aggiungere i piselli e un mestolo di brodo." },
+            { "title": "Cottura", "description": "Tostare il riso con i piselli, poi aggiungere il brodo dei baccelli un mestolo alla volta. Deve risultare una via di mezzo tra una minestra e un risotto (all'onda)." }
+        ],
+        "serving": "4 persone. Piatto celebrativo del Doge per San Marco.",
+        "tags": ["lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,rice,peas?lock=151"
+    },
+    {
+        "id": "152",
+        "name": "Polenta e Schie",
+        "origin": "Veneto (Venezia)",
+        "sources": ["Cucina Lagunare", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "30 min",
+        "mealCategories": ["Cena", "Antipasto"],
+        "ingredients": [
+            { "foodId": "1291", "amount": 500, "note": "Schie (gamberetti di laguna)" },
+            { "foodId": "1009", "amount": 250, "note": "Farina di mais gialla o bianca" },
+            { "foodId": "1018", "amount": 1, "note": "Aglio" }
+        ],
+        "steps": [
+            { "title": "Polenta", "description": "Preparare una polenta morbida (tenera) cuocendola per almeno 40 minuti." },
+            { "title": "Schie", "description": "Lavare i gamberetti e asciugarli bene. Infarinarli leggermente e friggerli in olio bollente con uno spicchio d'aglio finché non sono croccanti." },
+            { "title": "Servizio", "description": "Stendere la polenta calda sul piatto e adagiarvi sopra le schie fritte." }
+        ],
+        "serving": "4 persone. Piatto povero ma raffinatissimo della laguna veneziana.",
+        "tags": ["gluten-free", "lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,shrimp,polenta?lock=152"
+    },
+    {
+        "id": "153",
+        "name": "Pizzoccheri della Valtellina",
+        "origin": "Lombardia",
+        "sources": ["Accademia del Pizzocchero", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "60 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "5286", "amount": 400, "note": "Farina di grano saraceno (per i pizzoccheri)" },
+            { "foodId": "255", "amount": 200, "note": "Verza" },
+            { "foodId": "1247", "amount": 250, "note": "Patate a cubetti" },
+            { "foodId": "5302", "amount": 200, "note": "Formaggio Valtellina Casera DOP" },
+            { "foodId": "1003", "amount": 100, "note": "Burro d'alpeggio" }
+        ],
+        "steps": [
+            { "title": "Cottura", "description": "Far bollire verza e patate in acqua salata. Dopo 5 minuti aggiungere i pizzoccheri (pasta di grano saraceno)." },
+            { "title": "Condimento", "description": "In un pentolino far sfrigolare il burro con aglio e salvia finché non diventa nocciola." },
+            { "title": "Mantecatura", "description": "Scolare pasta e verdure, disporle in una teglia alternandole a fette di Casera. Irrorare con il burro bollente senza mescolare troppo." }
+        ],
+        "serving": "4 persone. Il piatto invernale per eccellenza della Valtellina.",
+        "tags": ["vegetarian"],
+        "image": "https://loremflickr.com/800/600/food,cooked,buckwheat,pasta?lock=153"
+    },
+    {
+        "id": "154",
+        "name": "Cotoletta alla Milanese",
+        "origin": "Lombardia (Milano)",
+        "sources": ["Cucina Milanese", "Il Cucchiaio d'Argento"],
+        "difficulty": "Media",
+        "prepTime": "30 min",
+        "mealCategories": ["Pranzo", "Cena", "Secondo"],
+        "ingredients": [
+            { "foodId": "1022", "amount": 4, "note": "Costolette di vitello con l'osso (2-3 cm)" },
+            { "foodId": "63", "amount": 2, "note": "Uova fresche" },
+            { "foodId": "1006", "amount": 200, "note": "Pangrattato" },
+            { "foodId": "1003", "amount": 150, "note": "Burro chiarificato" }
+        ],
+        "steps": [
+            { "title": "Preparazione", "description": "Passare la carne nell'uovo sbattuto e poi nel pangrattato, premendo bene. Non salare prima!" },
+            { "title": "Cottura", "description": "Friggere nel burro chiarificato caldo a fuoco medio-basso. Deve cuocere lentamente per diventare dorata fuori e succosa dentro." },
+            { "title": "Finitura", "description": "Asciugare su carta assorbente e salare solo prima di servire." }
+        ],
+        "serving": "4 persone. L'osso deve essere presente, è la vera milanese!",
+        "tags": ["lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,cutlet,milanese?lock=154"
+    },
+    {
+        "id": "155",
+        "name": "Cassoeula",
+        "origin": "Lombardia",
+        "sources": ["Cucina Milanese", "GialloZafferano"],
+        "difficulty": "Difficile",
+        "prepTime": "180 min",
+        "mealCategories": ["Cena", "Piatto Unico"],
+        "ingredients": [
+            { "foodId": "255", "amount": 2000, "note": "Verza (meglio se ha preso la gelata)" },
+            { "foodId": "1292", "amount": 800, "note": "Costine di maiale" },
+            { "foodId": "1293", "amount": 200, "note": "Cotenna e piedini" },
+            { "foodId": "1245", "amount": 300, "note": "Salamini (verzini)" }
+        ],
+        "steps": [
+            { "title": "Cottura carne", "description": "Bollire piedini e cotenne per 1 ora per sgrassarli. Rosolare le costine in padella con burro e cipolla." },
+            { "title": "Verza", "description": "In una pentola enorme, appassire la verza a fuoco bassissimo con pochissima acqua finché non si riduce." },
+            { "title": "Unione", "description": "Unire tutte le carni alla verza e cuocere a fuoco lentissimo per almeno 2 ore, finché non diventa una massa densa e saporita." }
+        ],
+        "serving": "6 persone. Piatto invernale che richiede polenta d'accompagnamento.",
+        "tags": ["gluten-free", "lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,stew,cabbage?lock=155"
+    },
+    {
+        "id": "156",
+        "name": "Ribollita Toscana",
+        "origin": "Toscana",
+        "sources": ["Tradizione Toscana", "Il Cucchiaio d'Argento"],
+        "difficulty": "Media",
+        "prepTime": "120 min",
+        "mealCategories": ["Pranzo", "Cena"],
+        "ingredients": [
+            { "foodId": "3510", "amount": 500, "note": "Cavolo nero" },
+            { "foodId": "2218", "amount": 400, "note": "Fagioli cannellini secchi" },
+            { "foodId": "1006", "amount": 300, "note": "Pane toscano raffermo" },
+            { "foodId": "1017", "amount": 1, "note": "Cipolla, carota e sedano" }
+        ],
+        "steps": [
+            { "title": "Fagioli", "description": "Cuocere i fagioli in abbondante acqua. Frullarne la metà e rimetterli nel brodo di cottura." },
+            { "title": "Verdure", "description": "Soffriggere gli odori, aggiungere il cavolo nero e le altre verdure. Coprire con il brodo dei fagioli." },
+            { "title": "Ribollitura", "description": "In una zuppiera alternare fette di pane e zuppa. Lasciar riposare una notte. Il giorno dopo farla bollire (ribollire) in padella con olio." }
+        ],
+        "serving": "4-6 persone. Servire con un giro d'olio EVO a crudo.",
+        "tags": ["vegan", "lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,soup,tuscany?lock=156"
+    },
+    {
+        "id": "157",
+        "name": "Castagnaccio",
+        "origin": "Toscana",
+        "sources": ["Cucina Toscana", "GialloZafferano"],
+        "difficulty": "Facile",
+        "prepTime": "60 min",
+        "mealCategories": ["Dessert", "Snack"],
+        "ingredients": [
+            { "foodId": "5256", "amount": 500, "note": "Farina di castagne dolce" },
+            { "foodId": "3181", "amount": 50, "note": "Pinoli" },
+            { "foodId": "1023", "amount": 50, "note": "Uvetta" },
+            { "foodId": "1010", "amount": 50, "note": "Olio EVO e rosmarino" }
+        ],
+        "steps": [
+            { "title": "Impasto", "description": "Sciogliere la farina di castagne in acqua finché non diventa una pastella fluida. Aggiungere uvetta e pinoli." },
+            { "title": "Preparazione", "description": "Versare in una teglia bassa ben oliata. Cospargere con aghi di rosmarino e un filo d'olio." },
+            { "title": "Cottura", "description": "Infornare a 200°C per 30 minuti finché non si formano le classiche crepe in superficie." }
+        ],
+        "serving": "8 persone. Dolce senza zucchero aggiunto, naturalmente dolce.",
+        "tags": ["vegan", "gluten-free", "lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,chestnut,cake?lock=157"
+    },
+    {
+        "id": "158",
+        "name": "Caciucco alla Livornese",
+        "origin": "Toscana (Livorno)",
+        "sources": ["Tradizione Livornese", "GialloZafferano"],
+        "difficulty": "Difficile",
+        "prepTime": "90 min",
+        "mealCategories": ["Cena", "Piatto Unico"],
+        "ingredients": [
+            { "foodId": "1295", "amount": 1500, "note": "Pesce misto (scorfano, gallinella, seppie, polpi, cicale)" },
+            { "foodId": "1001", "amount": 400, "note": "Pomodori pelati" },
+            { "foodId": "1006", "amount": 4, "note": "Fette di pane toscano" },
+            { "foodId": "1018", "amount": 2, "note": "Aglio" }
+        ],
+        "steps": [
+            { "title": "Soffritto", "description": "Soffriggere aglio, salvia e peperoncino. Aggiungere i polpi e le seppie tagliati a pezzi. Sfumare con vino rosso." },
+            { "title": "Sugo", "description": "Unire il pomodoro e cuocere finché i molluschi sono teneri. Aggiungere poi i pesci a carne soda e infine i crostacei." },
+            { "title": "Servizio", "description": "Strofinare il pane con aglio, metterlo sul fondo delle ciotole e versarvi sopra la zuppa di pesce." }
+        ],
+        "serving": "4-6 persone. Si scrive con 5 'C' come dice la tradizione.",
+        "tags": ["lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,fish,stew?lock=158"
+    },
+    {
+        "id": "159",
+        "name": "Lampredotto nel panino",
+        "origin": "Toscana (Firenze)",
+        "sources": ["Street Food Fiorentino", "Accademia del Lampredotto"],
+        "difficulty": "Media",
+        "prepTime": "120 min",
+        "mealCategories": ["Pranzo", "Snack"],
+        "ingredients": [
+            { "foodId": "1290", "amount": 1000, "note": "Lampredotto (abomaso di bue)" },
+            { "foodId": "1006", "amount": 4, "note": "Pane tipo rosetta (semelle)" },
+            { "foodId": "1017", "amount": 1, "note": "Sedano, carota, cipolla e pomodoro per il brodo" }
+        ],
+        "steps": [
+            { "title": "Cottura", "description": "Bollire il lampredotto in abbondante acqua con gli odori per almeno 2 ore finché non è tenerissimo." },
+            { "title": "Salsa", "description": "Preparare una salsa verde con prezzemolo, acciughe, capperi e olio." },
+            { "title": "Composizione", "description": "Tagliare il lampredotto a listarelle, inzuppare la parte superiore del pane nel brodo bollente, farcire con la carne, sale, pepe e salsa verde." }
+        ],
+        "serving": "4 persone. Il re dello street food fiorentino.",
+        "tags": ["lactose-free"],
+        "image": "https://loremflickr.com/800/600/food,cooked,sandwich,tripe?lock=159"
+    },
+    {
+        "id": "160",
+        "name": "Cantucci di Prato",
+        "origin": "Toscana (Prato)",
+        "sources": ["Mattei Prato", "GialloZafferano"],
+        "difficulty": "Media",
+        "prepTime": "60 min",
+        "mealCategories": ["Dessert"],
+        "ingredients": [
+            { "foodId": "1014", "amount": 500, "note": "Farina 00" },
+            { "foodId": "1399", "amount": 250, "note": "Mandorle intere con la buccia" },
+            { "foodId": "63", "amount": 4, "note": "Uova" },
+            { "foodId": "1003", "amount": 100, "note": "Burro" }
+        ],
+        "steps": [
+            { "title": "Impasto", "description": "Impastare farina, uova, zucchero e burro fuso. Unire le mandorle intere alla fine." },
+            { "title": "Prima cottura", "description": "Formare dei filoncini larghi 3 cm e infornare a 180°C per 20 minuti." },
+            { "title": "Taglio e biscottatura", "description": "Sfornare i filoncini caldi, tagliarli diagonalmente a fette di 1 cm e rimetterli in forno per 10 minuti per farli tostare." }
+        ],
+        "serving": "10-12 persone. Da inzuppare rigorosamente nel Vin Santo.",
+        "tags": ["vegetarian"],
+        "image": "https://loremflickr.com/800/600/food,cooked,cookies,almond?lock=160"
     }
 ]

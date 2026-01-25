@@ -6424,8 +6424,11 @@
         "carbs": 58,
         "fats": 7,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,chickpea,flour?lock=1282",
-        "tags": ["gluten-free", "vegan"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,chickpea,flour?lock=1282",
+        "tags": [
+            "gluten-free",
+            "vegan"
+        ]
     },
     {
         "id": "1283",
@@ -6436,8 +6439,10 @@
         "carbs": 71,
         "fats": 1.5,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,pasta,penne?lock=1283",
-        "tags": ["lactose-free"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,pasta,penne?lock=1283",
+        "tags": [
+            "lactose-free"
+        ]
     },
     {
         "id": "1284",
@@ -6448,8 +6453,10 @@
         "carbs": 71,
         "fats": 1.5,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,pasta,fusilli?lock=1284",
-        "tags": ["lactose-free"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,pasta,fusilli?lock=1284",
+        "tags": [
+            "lactose-free"
+        ]
     },
     {
         "id": "1285",
@@ -6460,8 +6467,11 @@
         "carbs": 0,
         "fats": 18,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,meat,sheep?lock=1285",
-        "tags": ["gluten-free", "lactose-free"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,meat,sheep?lock=1285",
+        "tags": [
+            "gluten-free",
+            "lactose-free"
+        ]
     },
     {
         "id": "1286",
@@ -6472,8 +6482,10 @@
         "carbs": 0.4,
         "fats": 25,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,mozzarella,buffalo?lock=1286",
-        "tags": ["gluten-free"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,mozzarella,buffalo?lock=1286",
+        "tags": [
+            "gluten-free"
+        ]
     },
     {
         "id": "1287",
@@ -6484,8 +6496,11 @@
         "carbs": 1,
         "fats": 50,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,spicy,meat?lock=1287",
-        "tags": ["gluten-free", "lactose-free"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,spicy,meat?lock=1287",
+        "tags": [
+            "gluten-free",
+            "lactose-free"
+        ]
     },
     {
         "id": "1288",
@@ -6496,8 +6511,10 @@
         "carbs": 55,
         "fats": 1,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,bread,altamura?lock=1288",
-        "tags": ["lactose-free"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,bread,altamura?lock=1288",
+        "tags": [
+            "lactose-free"
+        ]
     },
     {
         "id": "1289",
@@ -6508,7 +6525,82 @@
         "carbs": 0,
         "fats": 18,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,bottarga?lock=1289",
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,bottarga?lock=1289",
+        "tags": [
+            "gluten-free",
+            "lactose-free"
+        ]
+    },
+    {
+        "id": "1290",
+        "name": "Trippa di bue",
+        "category": "Proteine",
+        "calories": 94,
+        "protein": 12,
+        "carbs": 0,
+        "fats": 5,
+        "unit": "100g",
+        "image": "https://loremflickr.com/300/200/food,tripe?lock=1290",
+        "tags": ["gluten-free", "lactose-free", "low-fat"]
+    },
+    {
+        "id": "1291",
+        "name": "Gamberetti di laguna",
+        "category": "Proteine",
+        "calories": 71,
+        "protein": 13,
+        "carbs": 1,
+        "fats": 1,
+        "unit": "100g",
+        "image": "https://loremflickr.com/300/200/food,shrimp?lock=1291",
+        "tags": ["gluten-free", "lactose-free", "low-fat"]
+    },
+    {
+        "id": "1292",
+        "name": "Costine di maiale",
+        "category": "Proteine",
+        "calories": 247,
+        "protein": 17,
+        "carbs": 0,
+        "fats": 20,
+        "unit": "100g",
+        "image": "https://loremflickr.com/300/200/food,pork,ribs?lock=1292",
         "tags": ["gluten-free", "lactose-free"]
+    },
+    {
+        "id": "1293",
+        "name": "Cotenna di maiale",
+        "category": "Proteine",
+        "calories": 544,
+        "protein": 31,
+        "carbs": 0,
+        "fats": 47,
+        "unit": "100g",
+        "image": "https://loremflickr.com/300/200/food,pork,skin?lock=1293",
+        "tags": ["gluten-free", "lactose-free"]
+    },
+    {
+        "id": "1294",
+        "name": "Piedino di maiale",
+        "category": "Proteine",
+        "calories": 230,
+        "protein": 19,
+        "carbs": 0,
+        "fats": 17,
+        "unit": "100g",
+        "image": "https://loremflickr.com/300/200/food,pork,foot?lock=1294",
+        "tags": ["gluten-free", "lactose-free"]
+    },
+    {
+        "id": "1295",
+        "name": "Pesce misto da zuppa",
+        "category": "Proteine",
+        "calories": 100,
+        "protein": 18,
+        "carbs": 0,
+        "fats": 3,
+        "unit": "100g",
+        "image": "https://loremflickr.com/300/200/food,fish,soup?lock=1295",
+        "tags": ["gluten-free", "lactose-free", "low-fat"]
     }
 ]
