@@ -6540,8 +6540,12 @@
         "carbs": 0,
         "fats": 5,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,tripe?lock=1290",
-        "tags": ["gluten-free", "lactose-free", "low-fat"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,tripe?lock=1290",
+        "tags": [
+            "gluten-free",
+            "lactose-free",
+            "low-fat"
+        ]
     },
     {
         "id": "1291",
@@ -6552,8 +6556,12 @@
         "carbs": 1,
         "fats": 1,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,shrimp?lock=1291",
-        "tags": ["gluten-free", "lactose-free", "low-fat"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,shrimp?lock=1291",
+        "tags": [
+            "gluten-free",
+            "lactose-free",
+            "low-fat"
+        ]
     },
     {
         "id": "1292",
@@ -6564,8 +6572,11 @@
         "carbs": 0,
         "fats": 20,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,pork,ribs?lock=1292",
-        "tags": ["gluten-free", "lactose-free"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,pork,ribs?lock=1292",
+        "tags": [
+            "gluten-free",
+            "lactose-free"
+        ]
     },
     {
         "id": "1293",
@@ -6576,8 +6587,11 @@
         "carbs": 0,
         "fats": 47,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,pork,skin?lock=1293",
-        "tags": ["gluten-free", "lactose-free"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,pork,skin?lock=1293",
+        "tags": [
+            "gluten-free",
+            "lactose-free"
+        ]
     },
     {
         "id": "1294",
@@ -6588,8 +6602,11 @@
         "carbs": 0,
         "fats": 17,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,pork,foot?lock=1294",
-        "tags": ["gluten-free", "lactose-free"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,pork,foot?lock=1294",
+        "tags": [
+            "gluten-free",
+            "lactose-free"
+        ]
     },
     {
         "id": "1295",
@@ -6600,7 +6617,11 @@
         "carbs": 0,
         "fats": 3,
         "unit": "100g",
-        "image": "https://loremflickr.com/300/200/food,fish,soup?lock=1295",
-        "tags": ["gluten-free", "lactose-free", "low-fat"]
+        "image": "https:\/\/loremflickr.com\/300\/200\/food,fish,soup?lock=1295",
+        "tags": [
+            "gluten-free",
+            "lactose-free",
+            "low-fat"
+        ]
     }
 ]
